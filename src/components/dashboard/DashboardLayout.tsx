@@ -1,15 +1,22 @@
 import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import React from 'react';
-import { FaUserFriends, FaUsers, FaCalendarAlt, FaUserCircle, FaSun, FaMoon, FaBars, FaRegQuestionCircle } from 'react-icons/fa'; // Import icons
+import {
+  FaUserFriends,
+  FaUsers,
+  FaCalendarAlt,
+  FaUserCircle,
+  FaSun,
+  FaMoon,
+  FaBars,
+} from 'react-icons/fa';
 import { FaCircleQuestion, FaList } from 'react-icons/fa6';
 
 const DashboardLayout: React.FC = () => {
   const navigate = useNavigate();
-  const [isDarkMode, setIsDarkMode] = useState(false); // State for dark/light mode
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true); // State for sidebar expansion
-
-  
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
     const userType = localStorage.getItem('userType');
@@ -17,6 +24,24 @@ const DashboardLayout: React.FC = () => {
       navigate('/signin');
     }
   }, [navigate]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const formattedDateTime = currentTime.toLocaleString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true,
+  });
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -57,52 +82,34 @@ const DashboardLayout: React.FC = () => {
             <FaBars />
           </button>
         </div>
+
         <nav className="mt-6 flex-1 overflow-y-auto">
-          <div>
-            <Link
-              to="/dashboard/farmers"
-              className="py-2 px-4 hover:bg-green-700 rounded-md mx-2 flex items-center"
-            >
-              <FaUserFriends className="mr-2" />
-              {isSidebarExpanded && 'Farmers Information'}
-            </Link>
-            <Link
-              to="/dashboard/groups"
-              className="py-2 px-4 hover:bg-green-700 rounded-md mx-2 flex items-center"
-            >
-              <FaUsers className="mr-2" />
-              {isSidebarExpanded && 'Farmer Groups'}
-            </Link>
-            <Link
-              to="/dashboard/groups"
-              className="py-2 px-4 hover:bg-green-700 rounded-md mx-2 flex items-center"
-            >
-              <FaCircleQuestion className="mr-2" />
-              {isSidebarExpanded && 'Farmer Inqueries'}
-            </Link>
-            <Link
-              to="/dashboard/groups"
-              className="py-2 px-4 hover:bg-green-700 rounded-md mx-2 flex items-center"
-            >
-              <FaList className="mr-2" />
-              {isSidebarExpanded && 'Cultivational Updates'}
-            </Link>
-            <Link
-              to="/dashboard/calendar"
-              className="py-2 px-4 hover:bg-green-700 rounded-md mx-2 flex items-center"
-            >
-              <FaCalendarAlt className="mr-2" />
-              {isSidebarExpanded && 'Calendar'}
-            </Link>
-            <Link
-              to="/dashboard/profile"
-              className="py-2 px-4 hover:bg-green-700 rounded-md mx-2 flex items-center"
-            >
-              <FaUserCircle className="mr-2" />
-              {isSidebarExpanded && 'User Profile'}
-            </Link>
-          </div>
+          <Link to="/dashboard/farmers" className="py-2 px-4 hover:bg-green-700 rounded-md mx-2 flex items-center">
+            <FaUserFriends className="mr-2" />
+            {isSidebarExpanded && 'Farmers Information'}
+          </Link>
+          <Link to="/dashboard/groups" className="py-2 px-4 hover:bg-green-700 rounded-md mx-2 flex items-center">
+            <FaUsers className="mr-2" />
+            {isSidebarExpanded && 'Farmer Groups'}
+          </Link>
+          <Link to="/dashboard/inqueries" className="py-2 px-4 hover:bg-green-700 rounded-md mx-2 flex items-center">
+            <FaCircleQuestion className="mr-2" />
+            {isSidebarExpanded && 'Farmer Inquiries'}
+          </Link>
+          <Link to="/dashboard/updates" className="py-2 px-4 hover:bg-green-700 rounded-md mx-2 flex items-center">
+            <FaList className="mr-2" />
+            {isSidebarExpanded && 'Cultivational Updates'}
+          </Link>
+          <Link to="/dashboard/calendar" className="py-2 px-4 hover:bg-green-700 rounded-md mx-2 flex items-center">
+            <FaCalendarAlt className="mr-2" />
+            {isSidebarExpanded && 'Calendar'}
+          </Link>
+          <Link to="/dashboard/profile" className="py-2 px-4 hover:bg-green-700 rounded-md mx-2 flex items-center">
+            <FaUserCircle className="mr-2" />
+            {isSidebarExpanded && 'User Profile'}
+          </Link>
         </nav>
+
         <div className="py-4 w-full p-4">
           <button
             onClick={handleLogout}
@@ -113,23 +120,21 @@ const DashboardLayout: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 overflow-auto">
-        {/* Navigation Bar */}
-        <div className={`p-4 flex justify-between items-center ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-md`}>
-          <h1 className="text-xl font-bold">Dashboard</h1>
-          <button
-            onClick={toggleTheme}
-            className="flex items-center px-4 py-2 rounded-md focus:outline-none"
-          >
-            {isDarkMode ? (
-              <><FaSun className="mr-2" /> Light Mode</>
-            ) : (
-              <><FaMoon className="mr-2" /> Dark Mode</>
-            )}
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+
+        {/* Top Navbar */}
+        <div className={`flex items-center justify-between px-6 py-3 border-b fixed top-0 left-0 right-0 z-10 ${
+          isDarkMode ? 'bg-gray-800 text-white border-gray-700' : 'bg-green-900 text-white border-gray-700'
+        }`} style={{ marginLeft: isSidebarExpanded ? '16rem' : '4rem', transition: 'margin-left 0.3s ease' }}>
+          <div>{formattedDateTime}</div>
+          <button onClick={toggleTheme} className="text-xl focus:outline-none">
+            {isDarkMode ? <FaSun /> : <FaMoon />}
           </button>
         </div>
-        <div className="p-6">
+
+        {/* Content below navbar */}
+        <div className="mt-16 p-6 overflow-auto h-full">
           <Outlet />
         </div>
       </div>

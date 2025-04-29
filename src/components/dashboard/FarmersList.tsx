@@ -89,7 +89,7 @@ const FarmersList = () => {
         <h2 className="text-2xl font-bold text-gray-800">Farmers Management</h2>
         <button
           onClick={() => { setShowForm(true); setEditingFarmer(null); }}
-          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md"
+          className="bg-green-800 hover:bg-yellow-500 text-white px-4 py-2 rounded-md"
         >
            <FaPlus></FaPlus>
         </button>

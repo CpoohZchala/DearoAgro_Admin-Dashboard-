@@ -86,6 +86,8 @@ export const updateFarmer = async (id: string, farmerData: FarmerData): Promise<
 
 // Delete a farmer by ID
 export const deleteFarmer = async (id: string): Promise<ApiResponse> => {
+  console.log("Deleting farmer with ID:", id); // 🐞 DEBUG LOG
+
   try {
     const response = await fetch(`${BASE_URL}/${id}`, {
       method: 'DELETE',
@@ -98,6 +100,7 @@ export const deleteFarmer = async (id: string): Promise<ApiResponse> => {
     return { success: false, message: error.message };
   }
 };
+
 
 // Get all farmer groups
 export const getFarmerGroups = async (): Promise<ApiResponse> => {
