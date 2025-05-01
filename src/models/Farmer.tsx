@@ -8,6 +8,7 @@ export interface FarmerProps {
   
   export class Farmer {
     [x: string]: string | Date | undefined;
+    _id: string;
     id: string;
     fullName: string;
     mobileNumber: string;
@@ -19,8 +20,10 @@ export interface FarmerProps {
       fullName, 
       mobileNumber,  
       groupId, 
-      createdAt 
-    }: FarmerProps) {
+      createdAt, 
+      _id 
+    }: FarmerProps & { _id: string }) {
+      this._id = _id;
       this.id = id;
       this.fullName = fullName;
       this.mobileNumber = mobileNumber;
@@ -28,4 +31,3 @@ export interface FarmerProps {
       this.createdAt = new Date(createdAt);
     }
   }
-  

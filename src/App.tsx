@@ -5,6 +5,8 @@ import SignIn from './components/auth/SignIn';
 import SignUp from './components/auth/SignUp';
 import DashboardHome from './components/dashboard/DashboardHome';
 import SuperAdminProfile from './components/dashboard/SuperAdminProfile';
+import GroupManagement from './components/dashboard/GroupManagement';
+import Calendar from './components/dashboard/Calendar';
 import { FC } from 'react';
 import React from 'react';
 
@@ -31,6 +33,11 @@ const App: FC = () => {
           <Route index element={<DashboardHome />} />
           <Route path="farmers" element={<FarmersList />} />
           <Route path="profile" element={<SuperAdminProfile />} />
+          <Route path="groups" element={<GroupManagement />} />
+          <Route 
+            path="calendar" 
+            element={<Calendar />} 
+          />
           {/* Add other dashboard routes here */}
         </Route>
 

@@ -9,8 +9,9 @@ import {
   FaSun,
   FaMoon,
   FaBars,
+  FaBookReader,
 } from 'react-icons/fa';
-import { FaCircleQuestion, FaList } from 'react-icons/fa6';
+import { FaBookQuran, FaCircleQuestion, FaList } from 'react-icons/fa6';
 
 const DashboardLayout: React.FC = () => {
   const navigate = useNavigate();
@@ -74,7 +75,6 @@ const DashboardLayout: React.FC = () => {
               <img src="/Dearo Agro.png" alt="Dearo Agro Logo" className="h-12 mr-2" />
               <div>
                 <h1 className="text-2xl font-bold">Dearo Agro</h1>
-                <p className="text-green-200 text-sm">Super Admin Dashboard</p>
               </div>
             </div>
           )}
@@ -84,6 +84,10 @@ const DashboardLayout: React.FC = () => {
         </div>
 
         <nav className="mt-6 flex-1 overflow-y-auto">
+        <Link to="/dashboard" className="py-2 px-4 hover:bg-green-700 rounded-md mx-2 flex items-center">
+            <FaBookReader className="mr-2" />
+            {isSidebarExpanded && 'Main Dashboard'}
+          </Link>
           <Link to="/dashboard/farmers" className="py-2 px-4 hover:bg-green-700 rounded-md mx-2 flex items-center">
             <FaUserFriends className="mr-2" />
             {isSidebarExpanded && 'Farmers Information'}

@@ -3,6 +3,7 @@ import { getFarmers, deleteFarmer, getFarmerById } from '../../api/farmerApi';
 import { Farmer } from '../../models/Farmer';
 import FarmerForm from './FarmerForm';
 import AssignToGroupModal from './AssignToGroupModal';
+import ConfirmDialog from '../dialogs/ConfirmDialog';
 import React from 'react';
 import { FaPlus } from 'react-icons/fa';
 
@@ -14,6 +15,8 @@ const FarmersList = () => {
   const [editingFarmer, setEditingFarmer] = useState<Farmer | null>(null);
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [selectedFarmer, setSelectedFarmer] = useState<Farmer | null>(null);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [farmerToDelete, setFarmerToDelete] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchFarmers = async () => {
@@ -23,7 +26,10 @@ const FarmersList = () => {
         if (!response.success) {
           throw new Error(response.message || 'Failed to fetch farmers. Please try again later.');
         }
-        setFarmers(response.data.map((farmer: any) => new Farmer(farmer)));
+        setFarmers(response.data.map((farmer: any) => new Farmer({
+          ...farmer,
+          createdAt: new Date(farmer.createdAt), // Ensure createdAt is a Date object
+        })));
       } catch (err: any) {
         console.error('Error fetching farmers:', err);
         setError(err.message);
@@ -35,18 +41,31 @@ const FarmersList = () => {
     fetchFarmers();
   }, []);
 
-  const handleDelete = async (id: string) => {
-    if (window.confirm('Are you sure you want to delete this farmer?')) {
+  const handleDeleteClick = (id: string) => {
+    setFarmerToDelete(id);
+    setShowConfirmDialog(true);
+  };
+
+  const confirmDelete = async () => {
+    if (farmerToDelete) {
       try {
-        const response = await deleteFarmer(id);
+        const response = await deleteFarmer(farmerToDelete);
         if (!response.success) {
           throw new Error(response.message || 'Failed to delete farmer');
         }
-        setFarmers(farmers.filter(farmer => farmer.id !== id));
+        setFarmers(farmers.filter(farmer => farmer._id !== farmerToDelete));
       } catch (err: any) {
         setError(err.message);
+      } finally {
+        setShowConfirmDialog(false);
+        setFarmerToDelete(null);
       }
     }
+  };
+
+  const cancelDelete = () => {
+    setShowConfirmDialog(false);
+    setFarmerToDelete(null);
   };
 
   const handleEdit = (farmer: Farmer) => {
@@ -55,13 +74,43 @@ const FarmersList = () => {
   };
 
   const handleAssign = (farmer: Farmer) => {
+    if (!farmer.groupId) {
+      setError('This farmer is not associated with any group. Please assign a group first.');
+      return;
+    }
     setSelectedFarmer(farmer);
     setShowAssignModal(true);
   };
 
+  const handleAssignGroup = (farmer: Farmer) => {
+    setSelectedFarmer(farmer);
+    setShowAssignModal(true);
+  };
+
+  const renderAssignGroupButton = (farmer: Farmer) => {
+    if (!farmer.groupId) {
+      return (
+        <button
+          onClick={() => handleAssignGroup(farmer)}
+          className="text-orange-600 hover:underline"
+        >
+          Assign Group
+        </button>
+      );
+    }
+    return (
+      <button
+        onClick={() => handleAssign(farmer)}
+        className="text-green-600 hover:underline"
+      >
+        Assign to Group
+      </button>
+    );
+  };
+
   const handleFormSubmit = (newFarmer: Farmer) => {
     if (editingFarmer) {
-      setFarmers(farmers.map(f => f.id === newFarmer.id ? newFarmer : f));
+      setFarmers(farmers.map(f => f._id === newFarmer._id ? newFarmer : f)); // ✅ updated to use _id
     } else {
       setFarmers([...farmers, newFarmer]);
     }
@@ -86,12 +135,12 @@ const FarmersList = () => {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">Farmers Management</h2>
+        <h2 className="text-3xl font-extrabold text-black  px-4 py-2 ">📂Farmers Management</h2>
         <button
           onClick={() => { setShowForm(true); setEditingFarmer(null); }}
-          className="bg-green-800 hover:bg-yellow-500 text-white px-4 py-2 rounded-md"
+          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md"
         >
-           <FaPlus></FaPlus>
+           <FaPlus />
         </button>
       </div>
 
@@ -125,7 +174,7 @@ const FarmersList = () => {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {farmers.map((farmer) => (
-                  <tr key={farmer.id}>
+                  <tr key={farmer._id?.toString()}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{farmer.fullName}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{farmer.mobileNumber}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{typeof farmer.groupName === 'string' ? farmer.groupName : 'Unassigned'}</td>
@@ -137,19 +186,14 @@ const FarmersList = () => {
                         Edit
                       </button>
                       <button
-                        onClick={() => handleDelete(farmer.id)}
+                        onClick={() => handleDeleteClick(farmer._id?.toString() || '')}
                         className="text-red-600 hover:underline"
                       >
                         Delete
                       </button>
+                      {renderAssignGroupButton(farmer)}
                       <button
-                        onClick={() => handleAssign(farmer)}
-                        className="text-green-600 hover:underline"
-                      >
-                        Assign to Group
-                      </button>
-                      <button
-                        onClick={() => handleFetchFarmerById(farmer.id)}
+                        onClick={() => handleFetchFarmerById(farmer._id?.toString() || '')} // Ensure _id is a string
                         className="text-purple-600 hover:underline"
                       >
                         View Details
@@ -173,15 +217,24 @@ const FarmersList = () => {
 
       {showAssignModal && selectedFarmer && (
         <AssignToGroupModal
+          groupId={selectedFarmer.groupId || ''} // Pass an empty string if groupId is missing
           farmer={selectedFarmer}
           onClose={() => setShowAssignModal(false)}
           onAssign={(groupId: string) => {
             if (selectedFarmer) {
               const updatedFarmer = { ...selectedFarmer, groupId };
-              setFarmers(farmers.map(f => f.id === updatedFarmer.id ? updatedFarmer : f));
+              setFarmers(farmers.map(f => f._id === updatedFarmer._id ? updatedFarmer : f));
             }
             setShowAssignModal(false);
           }}
+        />
+      )}
+
+      {showConfirmDialog && (
+        <ConfirmDialog
+          message="Are you sure you want to delete this farmer?"
+          onConfirm={confirmDelete}
+          onCancel={cancelDelete}
         />
       )}
     </div>

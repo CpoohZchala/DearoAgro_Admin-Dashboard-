@@ -1,43 +1,53 @@
-import { useState, useEffect } from 'react';
-import { getFarmerGroups, assignFarmerToGroup } from '../../api/farmerApi';
-import React from 'react';
-
-interface Group {
-  id: string;
-  name: string;
-}
+import React, { useState, useEffect } from 'react';
+import {assignFarmerToGroup, getGroups } from '../../api/groupApi';
+import{getFarmers} from '../../api/farmerApi'
 
 interface Farmer {
-  id: string;
+  _id: string;
   fullName: string;
-  mobileNumber: string;
 }
 
 interface AssignToGroupModalProps {
-  farmer: Farmer;
+  groupId: string;
   onClose: () => void;
-  onAssign: (groupId: string) => void;
+  onAssign: (groupId: string, farmerId: string) => void;
+  onAssignComplete?: (groupId: string) => Promise<void>; // Add optional onAssignComplete property
+  farmer?: Farmer;
 }
 
-const AssignToGroupModal = ({ farmer, onClose, onAssign }: AssignToGroupModalProps) => {
-  const [groups, setGroups] = useState<Group[]>([]);
-  const [selectedGroup, setSelectedGroup] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>('');
+const AssignToGroupModal: React.FC<AssignToGroupModalProps> = ({ groupId, onClose, onAssign }) => {
+  const [farmers, setFarmers] = useState<Farmer[]>([]);
+  const [groups, setGroups] = useState<{ id: string; name: string }[]>([]);
+  const [selectedFarmer, setSelectedFarmer] = useState<string | null>(null);
+  const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchFarmers = async () => {
+      try {
+        const response = await getFarmers();
+        if (!response.success) {
+          throw new Error(response.message || 'Failed to fetch farmers');
+        }
+        setFarmers(response.data);
+      } catch (err: any) {
+        setError(err.message);
+      }
+    };
+
+    fetchFarmers();
+  }, []);
 
   useEffect(() => {
     const fetchGroups = async () => {
       try {
-        const response = await getFarmerGroups();
-        if (response.success && Array.isArray(response.data)) {
-          setGroups(response.data);
-        } else {
-          throw new Error(response.message || 'Invalid response format');
+        const response = await getGroups(); // Assuming getGroups is imported from groupApi
+        if (!response.success) {
+          throw new Error(response.message || 'Failed to fetch groups');
         }
-      } catch (err) {
-        setError('Failed to fetch groups');
-      } finally {
-        setLoading(false);
+        setGroups(response.data);
+      } catch (err: any) {
+        setError(err.message);
       }
     };
 
@@ -45,17 +55,29 @@ const AssignToGroupModal = ({ farmer, onClose, onAssign }: AssignToGroupModalPro
   }, []);
 
   const handleAssign = async () => {
-    if (!selectedGroup) return;
+    if (!selectedGroup) {
+      setError('Please select a group');
+      return;
+    }
+
+    if (!selectedFarmer) {
+      setError('Please select a farmer');
+      return;
+    }
+
+    console.log('Selected Group:', selectedGroup);
+    console.log('Selected Farmer:', selectedFarmer);
 
     try {
-      const response = await assignFarmerToGroup(farmer.id, selectedGroup);
-      if (response.success) {
-        onAssign(selectedGroup);
-      } else {
-        throw new Error(response.message || 'Failed to assign group');
+      const response = await assignFarmerToGroup(selectedGroup, selectedFarmer);
+      if (!response.success) {
+        throw new Error(response.message || 'Failed to assign farmer');
       }
-    } catch (err) {
-      setError('Failed to assign group');
+      onAssign(selectedGroup, selectedFarmer);
+      onClose();
+    } catch (err: any) {
+      console.error('Error assigning farmer:', err);
+      setError(err.message || 'Failed to assign farmer');
     }
   };
 
@@ -63,58 +85,36 @@ const AssignToGroupModal = ({ farmer, onClose, onAssign }: AssignToGroupModalPro
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-md">
         <h2 className="text-xl font-bold mb-4">Assign Farmer to Group</h2>
-
-        {error && (
-          <div className="mb-4 p-2 bg-red-50 text-red-700 rounded-md">
-            {error}
-          </div>
-        )}
-
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">
-            Farmer: {farmer.fullName} ({farmer.mobileNumber})
-          </label>
-        </div>
-
-        {loading ? (
-          <div className="flex justify-center items-center h-32">
-            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-green-500"></div>
-          </div>
-        ) : (
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="group">
-              Select Group
-            </label>
-            <select
-              id="group"
-              value={selectedGroup}
-              onChange={(e) => setSelectedGroup(e.target.value)}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            >
-              <option value="">Select a group</option>
-              {groups.map(group => (
-                <option key={group.id} value={group.id}>
-                  {group.name}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-
-        <div className="flex justify-end">
-          <button
-            type="button"
-            onClick={onClose}
-            className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded mr-2"
-          >
+        {error && <div className="mb-4 text-red-500">{error}</div>}
+        <select
+          value={selectedFarmer || ''}
+          onChange={(e) => setSelectedFarmer(e.target.value)}
+          className="w-full mb-4 p-2 border rounded"
+        >
+          <option value="">Select a Farmer</option>
+          {farmers.map((farmer: Farmer) => (
+            <option key={farmer._id} value={farmer._id}>
+              {farmer.fullName}
+            </option>
+          ))}
+        </select>
+        <select
+          value={selectedGroup || ''}
+          onChange={(e) => setSelectedGroup(e.target.value)}
+          className="w-full mb-4 p-2 border rounded"
+        >
+          <option value="">Select a Group</option>
+          {groups.map((group) => (
+            <option key={group.id} value={group.id}>
+              {group.name}
+            </option>
+          ))}
+        </select>
+        <div className="flex justify-end space-x-4">
+          <button onClick={onClose} className="bg-gray-300 px-4 py-2 rounded">
             Cancel
           </button>
-          <button
-            type="button"
-            onClick={handleAssign}
-            className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-            disabled={!selectedGroup}
-          >
+          <button onClick={handleAssign} className="bg-green-600 text-white px-4 py-2 rounded">
             Assign
           </button>
         </div>
