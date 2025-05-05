@@ -4,6 +4,7 @@ import {
   createGroup,
   deleteGroup,
   editGroup,
+  assignFarmerToGroup,
 } from "../../api/groupApi";
 import AssignToGroupModal from "./AssignToGroupModal";
 import ConfirmDialog from '../dialogs/ConfirmDialog';
@@ -70,6 +71,25 @@ const GroupManagement: React.FC = () => {
     }
   };
 
+  const handleAssignFarmerToGroup = async (groupId: string, farmerId: string) => {
+    try {
+      const response = await assignFarmerToGroup(groupId, farmerId);
+      if (!response.success) {
+        throw new Error(response.message || 'Failed to assign farmer to group');
+      }
+      alert('Farmer assigned to group successfully');
+
+      // Refresh groups after assignment
+      const updatedGroups = await getGroups();
+      if (updatedGroups.success) {
+        setGroups(updatedGroups.data);
+      }
+    } catch (error: any) {
+      console.error('Error assigning farmer to group:', error);
+      alert('Failed to assign farmer to group. Please try again.');
+    }
+  };
+
   const handleOpenAssignModal = (groupId: string) => {
     setSelectedGroupId(groupId);
     setShowAssignModal(true);
@@ -83,8 +103,9 @@ const GroupManagement: React.FC = () => {
   const handleAssignComplete = async (groupId: string) => {
     try {
       const response = await getGroups();
-      if (!response.success)
-        throw new Error(response.message || "Failed to refresh groups");
+      if (!response.success) {
+        throw new Error(response.message || 'Failed to refresh groups');
+      }
       setGroups(response.data);
       console.log(`Farmers assigned to group ${groupId}`);
     } catch (err: any) {
@@ -147,8 +168,7 @@ const GroupManagement: React.FC = () => {
           if (!response.success) {
             throw new Error(response.message || "Failed to delete group");
           }
-          alert("Group deleted successfully."); // Show success message
-          // Refresh groups after deletion
+          alert("Group deleted successfully.");
           const updatedGroups = await getGroups();
           if (updatedGroups.success) {
             setGroups(updatedGroups.data);
@@ -192,7 +212,7 @@ const GroupManagement: React.FC = () => {
 
   const handleAction = (action: () => void) => {
     action();
-    setActiveGroupId(null); // Close the dropdown after the action
+    setActiveGroupId(null);
   };
 
   return (

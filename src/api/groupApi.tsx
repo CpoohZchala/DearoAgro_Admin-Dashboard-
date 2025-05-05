@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 const BASE_URL = 'https://dearoagro-backend.onrender.com/api/groups';
 export interface ApiResponse {
   success: boolean;
@@ -102,5 +104,32 @@ export const getGroupMembers = async (groupId: string): Promise<ApiResponse> => 
     return { success: true, data };
   } catch (error: any) {
     return { success: false, message: error.message };
+  }
+};
+
+// Remove a farmer from a group
+export const removeFarmerFromGroup = async (groupId: string, farmerId: string): Promise<ApiResponse> => {
+  try {
+    const response = await fetch(`${BASE_URL}/${groupId}/remove-farmer/${farmerId}`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) {
+      throw new Error(`Error ${response.status}: ${response.statusText}`);
+    }
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, message: error.message };
+  }
+};
+
+const FARMER_BASE_URL = 'https://dearoagro-backend.onrender.com/api/farmers';
+
+// Delete a farmer
+export const deleteFarmer = async (farmerId: string) => {
+  try {
+    const response = await axios.delete(`${FARMER_BASE_URL}/${farmerId}`);
+    return { success: true, data: response.data };
+  } catch (error: any) {
+    return { success: false, message: error.response?.data?.message || 'Failed to delete farmer.' };
   }
 };

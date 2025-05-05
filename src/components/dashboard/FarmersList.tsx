@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getFarmers, deleteFarmer, getFarmerById } from '../../api/farmerApi';
+import { getGroups } from '../../api/groupApi';
 import { Farmer } from '../../models/Farmer';
 import FarmerForm from './FarmerForm';
 import AssignToGroupModal from './AssignToGroupModal';
@@ -19,26 +20,44 @@ const FarmersList = () => {
   const [farmerToDelete, setFarmerToDelete] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchFarmers = async () => {
+    const fetchFarmersAndGroups = async () => {
       try {
-        const response = await getFarmers();
-        console.log('API Response:', response);
-        if (!response.success) {
-          throw new Error(response.message || 'Failed to fetch farmers. Please try again later.');
+        const [farmersResponse, groupsResponse] = await Promise.all([getFarmers(), getGroups()]);
+
+        console.log('Raw Farmers Data:', farmersResponse.data); // Debugging log
+        console.log('Groups Response:', groupsResponse); // Debugging log
+
+        if (!farmersResponse.success || !groupsResponse.success) {
+          throw new Error('Failed to fetch farmers or groups.');
         }
-        setFarmers(response.data.map((farmer: any) => new Farmer({
+
+        const groupsMap = new Map(
+          groupsResponse.data.map((group: any) => [group._id, group.name])
+        );
+
+        console.log('Groups Map:', groupsMap); 
+
+        farmersResponse.data.forEach((farmer: any) => {
+          console.log('Farmer groupId:', farmer.groupId, 'Mapped groupName:', groupsMap.get(farmer.groupId));
+        });
+
+        const farmersWithGroupNames = farmersResponse.data.map((farmer: any) => ({
           ...farmer,
-          createdAt: new Date(farmer.createdAt), // Ensure createdAt is a Date object
-        })));
+          groupName: groupsMap.get(farmer.groupId) || 'Unassigned',
+        }));
+
+        console.log('Farmers with Group Names:', farmersWithGroupNames); 
+
+        setFarmers(farmersWithGroupNames);
       } catch (err: any) {
-        console.error('Error fetching farmers:', err);
+        console.error('Error fetching farmers or groups:', err);
         setError(err.message);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchFarmers();
+    fetchFarmersAndGroups();
   }, []);
 
   const handleDeleteClick = (id: string) => {
@@ -110,7 +129,7 @@ const FarmersList = () => {
 
   const handleFormSubmit = (newFarmer: Farmer) => {
     if (editingFarmer) {
-      setFarmers(farmers.map(f => f._id === newFarmer._id ? newFarmer : f)); // ✅ updated to use _id
+      setFarmers(farmers.map(f => f._id === newFarmer._id ? newFarmer : f));
     } else {
       setFarmers([...farmers, newFarmer]);
     }

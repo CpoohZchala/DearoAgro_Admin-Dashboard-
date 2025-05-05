@@ -1,17 +1,11 @@
 import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import React from 'react';
 import {
-  FaUserFriends,
-  FaUsers,
-  FaCalendarAlt,
-  FaUserCircle,
-  FaSun,
-  FaMoon,
-  FaBars,
-  FaBookReader,
+  FaUserFriends, FaUsers, FaCalendarAlt, FaUserCircle,
+  FaSun, FaMoon, FaBars, FaBookReader
 } from 'react-icons/fa';
 import { FaBookQuran, FaCircleQuestion, FaList } from 'react-icons/fa6';
+import React from 'react';
 
 const DashboardLayout: React.FC = () => {
   const navigate = useNavigate();
@@ -27,120 +21,92 @@ const DashboardLayout: React.FC = () => {
   }, [navigate]);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
   const formattedDateTime = currentTime.toLocaleString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: true,
+    weekday: 'short', year: 'numeric', month: 'short',
+    day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true,
   });
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userType');
-    localStorage.removeItem('userId');
+    localStorage.clear();
     navigate('/signin');
   };
 
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-  };
+  const toggleTheme = () => setIsDarkMode(!isDarkMode);
+  const toggleSidebar = () => setIsSidebarExpanded(!isSidebarExpanded);
 
-  const toggleSidebar = () => {
-    setIsSidebarExpanded(!isSidebarExpanded);
-  };
+  const navItems = [
+    { to: '/dashboard', label: 'Main Dashboard', icon: <FaBookReader /> },
+    { to: '/dashboard/farmers', label: 'Farmers Information', icon: <FaUserFriends /> },
+    { to: '/dashboard/groups', label: 'Farmer Groups', icon: <FaUsers /> },
+    { to: '/dashboard/inqueries', label: 'Farmer Inquiries', icon: <FaCircleQuestion /> },
+    { to: '/dashboard/updates', label: 'Cultivational Updates', icon: <FaList /> },
+    { to: '/dashboard/calendar', label: 'Calendar', icon: <FaCalendarAlt /> },
+    { to: '/dashboard/profile', label: 'User Profile', icon: <FaUserCircle /> },
+  ];
 
   return (
-    <div className={`flex h-screen ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'}`}>
+    <div className={`flex h-screen ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-black'} transition-colors`}>
       {/* Sidebar */}
-      <div
-        className={`${
-          isSidebarExpanded ? 'w-64' : 'w-16'
-        } flex-shrink-0 flex flex-col transition-all duration-300 ${
-          isDarkMode ? 'bg-gray-800 text-white' : 'bg-green-900 text-white'
-        }`}
-      >
-        <div className="p-4 flex items-center justify-between">
+      <div className={`${isSidebarExpanded ? 'w-64' : 'w-20'} flex flex-col bg-green-900 text-white transition-all duration-300`}>
+        <div className="flex items-center justify-between p-4 border-b border-green-800">
           {isSidebarExpanded && (
             <div className="flex items-center">
-              <img src="/Dearo Agro.png" alt="Dearo Agro Logo" className="h-12 mr-2" />
-              <div>
-                <h1 className="text-2xl font-bold">Dearo Agro</h1>
-              </div>
+              <img src="/Dearo Agro.png" alt="Logo" className="h-10 mr-2" />
+              <h1 className="text-xl font-bold">Dearo Agro</h1>
             </div>
           )}
-          <button onClick={toggleSidebar} className="text-white focus:outline-none">
+          <button onClick={toggleSidebar} className="text-white">
             <FaBars />
           </button>
         </div>
 
-        <nav className="mt-6 flex-1 overflow-y-auto">
-        <Link to="/dashboard" className="py-2 px-4 hover:bg-green-700 rounded-md mx-2 flex items-center">
-            <FaBookReader className="mr-2" />
-            {isSidebarExpanded && 'Main Dashboard'}
-          </Link>
-          <Link to="/dashboard/farmers" className="py-2 px-4 hover:bg-green-700 rounded-md mx-2 flex items-center">
-            <FaUserFriends className="mr-2" />
-            {isSidebarExpanded && 'Farmers Information'}
-          </Link>
-          <Link to="/dashboard/groups" className="py-2 px-4 hover:bg-green-700 rounded-md mx-2 flex items-center">
-            <FaUsers className="mr-2" />
-            {isSidebarExpanded && 'Farmer Groups'}
-          </Link>
-          <Link to="/dashboard/inqueries" className="py-2 px-4 hover:bg-green-700 rounded-md mx-2 flex items-center">
-            <FaCircleQuestion className="mr-2" />
-            {isSidebarExpanded && 'Farmer Inquiries'}
-          </Link>
-          <Link to="/dashboard/updates" className="py-2 px-4 hover:bg-green-700 rounded-md mx-2 flex items-center">
-            <FaList className="mr-2" />
-            {isSidebarExpanded && 'Cultivational Updates'}
-          </Link>
-          <Link to="/dashboard/calendar" className="py-2 px-4 hover:bg-green-700 rounded-md mx-2 flex items-center">
-            <FaCalendarAlt className="mr-2" />
-            {isSidebarExpanded && 'Calendar'}
-          </Link>
-          <Link to="/dashboard/profile" className="py-2 px-4 hover:bg-green-700 rounded-md mx-2 flex items-center">
-            <FaUserCircle className="mr-2" />
-            {isSidebarExpanded && 'User Profile'}
-          </Link>
+        <nav className="flex-1 overflow-y-auto py-4 px-2 custom-scrollbar">
+          {navItems.map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              className="flex items-center space-x-3 hover:bg-green-800 px-3 py-2 rounded-md transition-colors"
+              title={!isSidebarExpanded ? item.label : undefined}
+            >
+              <span className="text-lg">{item.icon}</span>
+              {isSidebarExpanded && <span className="text-sm">{item.label}</span>}
+            </Link>
+          ))}
         </nav>
 
-        <div className="py-4 w-full p-4">
+        <div className="p-4 border-t border-green-800 space-y-3">
           <button
             onClick={handleLogout}
-            className="w-full bg-red-600 hover:bg-yellow-500 text-white py-2 px-4 rounded-md"
+            className="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-md text-sm"
           >
-            {isSidebarExpanded && 'Logout'}
+            Logout
+          </button>
+          <button
+            onClick={toggleTheme}
+            className="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded-md flex items-center justify-center space-x-2 text-sm"
+          >
+            {isDarkMode ? <FaSun /> : <FaMoon />}
+            {isSidebarExpanded && <span>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>}
           </button>
         </div>
       </div>
 
-      {/* Main Content Area */}
+      {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Top Bar */}
+        <header className="flex justify-between items-center p-4 shadow-md bg-white dark:bg-gray-800 dark:text-white">
+          <div className="text-sm items-end">{formattedDateTime}</div>
+         
+        </header>
 
-        {/* Top Navbar */}
-        <div className={`flex items-center justify-between px-6 py-3 border-b fixed top-0 left-0 right-0 z-10 ${
-          isDarkMode ? 'bg-gray-800 text-white border-gray-700' : 'bg-green-900 text-white border-gray-700'
-        }`} style={{ marginLeft: isSidebarExpanded ? '16rem' : '4rem', transition: 'margin-left 0.3s ease' }}>
-          <div>{formattedDateTime}</div>
-          <button onClick={toggleTheme} className="text-xl focus:outline-none">
-            {isDarkMode ? <FaSun /> : <FaMoon />}
-          </button>
-        </div>
-
-        {/* Content below navbar */}
-        <div className="mt-16 p-6 overflow-auto h-full">
+        {/* Page Content */}
+        <main className="flex-1 overflow-y-auto p-4">
           <Outlet />
-        </div>
+        </main>
       </div>
     </div>
   );
