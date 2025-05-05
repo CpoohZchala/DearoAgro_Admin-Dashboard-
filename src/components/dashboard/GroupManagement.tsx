@@ -53,21 +53,32 @@ const GroupManagement: React.FC = () => {
     fetchGroups();
   }, []);
 
-  const handleCreateGroup = async () => {
-    if (!newGroupName.trim()) {
-      setError("Group name is required");
-      return;
-    }
-
+  // Add validation to ensure group names are unique
+  const handleCreateGroup = async (groupName: string) => {
     try {
-      const response = await createGroup({ name: newGroupName });
-      if (!response.success)
-        throw new Error(response.message || "Failed to create group");
-      setGroups([...groups, response.data]);
-      setNewGroupName("");
-      setError("");
-    } catch (err: any) {
-      setError(err.message);
+      // Fetch existing groups
+      const response = await getGroups();
+      if (!response.success) {
+        throw new Error('Failed to fetch groups.');
+      }
+
+      // Check if the group name already exists
+      const existingGroup = response.data.find((group: any) => group.name.toLowerCase() === groupName.toLowerCase());
+      if (existingGroup) {
+        alert('Group name must be unique. Please choose a different name.');
+        return;
+      }
+
+      // Proceed with group creation
+      const createResponse = await createGroup({ name: groupName });
+      if (createResponse.success) {
+        alert('Group created successfully!');
+      } else {
+        throw new Error(createResponse.message || 'Failed to create group.');
+      }
+    } catch (error: any) {
+      console.error('Error creating group:', error);
+      alert(error.message);
     }
   };
 
@@ -132,22 +143,41 @@ const GroupManagement: React.FC = () => {
     setShowEditDialog(true);
   };
 
+  // Add validation to ensure group names are unique during editing
   const handleEditConfirm = async (newName: string) => {
     if (!editingGroup) return;
 
     try {
-      const response = await editGroup(editingGroup.id, { name: newName });
+      // Fetch existing groups
+      const response = await getGroups();
       if (!response.success) {
-        throw new Error(response.message || "Failed to edit group");
+        throw new Error('Failed to fetch groups.');
+      }
+
+      // Check if the new group name already exists (excluding the current group being edited)
+      const existingGroup = response.data.find(
+        (group: any) => group.name.toLowerCase() === newName.toLowerCase() && group._id !== editingGroup.id
+      );
+      if (existingGroup) {
+        alert('Group name must be unique. Please choose a different name.');
+        return;
+      }
+
+      // Proceed with editing the group
+      const responseEdit = await editGroup(editingGroup.id, { name: newName });
+      if (!responseEdit.success) {
+        throw new Error(responseEdit.message || 'Failed to edit group.');
       }
       alert(`Group name changed successfully to: ${newName}`);
+
+      // Refresh the groups list
       const updatedGroups = await getGroups();
       if (updatedGroups.success) {
         setGroups(updatedGroups.data);
       }
     } catch (error: any) {
-      console.error("Error editing group:", error);
-      alert("Failed to edit group. Please try again.");
+      console.error('Error editing group:', error);
+      alert(error.message);
     } finally {
       setShowEditDialog(false);
       setEditingGroup(null);
@@ -236,7 +266,7 @@ const GroupManagement: React.FC = () => {
           className="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
         />
         <button
-          onClick={handleCreateGroup}
+          onClick={() => handleCreateGroup(newGroupName)}
           className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-md transition duration-200"
         >
           Create Group
