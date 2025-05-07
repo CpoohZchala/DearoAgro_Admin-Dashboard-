@@ -5,6 +5,7 @@ import { getFarmers } from '../../api/farmerApi';
 import { getGroups } from '../../api/groupApi';
 import { Farmer } from '../../models/Farmer';
 import { Leaf, Users, Calendar } from 'lucide-react';
+import { GrOrderedList } from 'react-icons/gr';
 
 const DashboardHome: FC = () => {
   const [farmers, setFarmers] = useState<Farmer[]>([]);
@@ -48,7 +49,28 @@ const DashboardHome: FC = () => {
     <div className="bg-gradient-to-br from-green-50 to-white p-8 rounded-xl shadow-lg">
       <h1 className="text-3xl font-extrabold text-black mb-6">🌿 Super Admin Dashboard</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+      {/* Quick Stats */}
+      <div className="bg-white border border-green-100 p-6 rounded-xl">
+        <h2 className="text-xl font-semibold text-green-700 mb-4">📊 Quick Stats</h2>
+        {loading ? (
+          <p className="text-gray-500">Loading...</p>
+        ) : error ? (
+          <p className="text-red-500">{error}</p>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2  gap-10">
+            <div className="bg-white p-5 rounded-lg shadow-sm text-center border border-yellow-400">
+              <h3 className="text-xl text-gray-900">Total Farmers</h3>
+              <p className="mt-5 text-3xl font-bold text-black">{farmers.length}</p>
+            </div>
+            <div className="bg-white p-5 rounded-lg shadow-sm text-center  border border-yellow-400">
+              <h3 className="text-xl text-gray-900 ">Active Groups</h3>
+              <p className="mt-5 text-3xl font-bold text-black">{groups.length}</p>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 mt-10">
         {/* Farmers Management */}
         <div className="bg-white border border-green-200 p-6 rounded-xl hover:shadow-md transition">
           <div className="flex items-center gap-3 mb-4">
@@ -58,7 +80,7 @@ const DashboardHome: FC = () => {
           <p className="text-gray-600 mb-4">View, add, edit, and delete farmers</p>
           <Link 
             to="/dashboard/farmers"
-            className="text-green-600 hover:text-green-800 font-medium"
+            className="text-yellow-400 hover:text-yellow-800 font-medium"
           >
             Go to Farmers →
           </Link>
@@ -73,9 +95,24 @@ const DashboardHome: FC = () => {
           <p className="text-gray-600 mb-4">Manage farmer groups and assignments</p>
           <Link 
             to="/dashboard/groups"
-            className="text-green-600 hover:text-green-800 font-medium"
+            className="text-yellow-400 hover:text-yellow-800 font-medium"
           >
             Go to Groups →
+          </Link>
+        </div>
+
+         {/* Cultivational Details*/}
+         <div className="bg-white border border-green-200 p-6 rounded-xl hover:shadow-md transition">
+          <div className="flex items-center gap-3 mb-4">
+            <GrOrderedList className="text-green-600" size={28} />
+            <h2 className="text-lg font-bold text-green-800">Farmer Cultivational Details</h2>
+          </div>
+          <p className="text-gray-600 mb-4">Can view updated cultivational details</p>
+          <Link 
+            to="/dashboard/groups"
+            className="text-yellow-400 hover:text-yellow-800 font-medium"
+          >
+            Go to Details →
           </Link>
         </div>
 
@@ -88,33 +125,14 @@ const DashboardHome: FC = () => {
           <p className="text-gray-600 mb-4">View and manage events and schedules</p>
           <Link 
             to="/dashboard/calendar"
-            className="text-green-600 hover:text-green-800 font-medium"
+            className="text-yellow-400 hover:text-yellow-800 font-medium"
           >
             Go to Calendar →
           </Link>
         </div>
       </div>
 
-      {/* Quick Stats */}
-      <div className="bg-white border border-green-100 p-6 rounded-xl">
-        <h2 className="text-xl font-semibold text-green-700 mb-4">📊 Quick Stats</h2>
-        {loading ? (
-          <p className="text-gray-500">Loading...</p>
-        ) : error ? (
-          <p className="text-red-500">{error}</p>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-green-50 p-5 rounded-lg shadow-sm text-center">
-              <h3 className="text-sm text-gray-600">Total Farmers</h3>
-              <p className="text-3xl font-bold text-green-700">{farmers.length}</p>
-            </div>
-            <div className="bg-green-50 p-5 rounded-lg shadow-sm text-center">
-              <h3 className="text-sm text-gray-600">Active Groups</h3>
-              <p className="text-3xl font-bold text-green-700">{groups.length}</p>
-            </div>
-          </div>
-        )}
-      </div>
+      
     </div>
   );
 };

@@ -2,9 +2,11 @@ import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import {
   FaUserFriends, FaUsers, FaCalendarAlt, FaUserCircle,
-  FaSun, FaMoon, FaBars, FaBookReader
+  FaSun, FaMoon, FaBars, FaBookReader,
+  FaCrop,
+  FaLeaf
 } from 'react-icons/fa';
-import { FaBookQuran, FaCircleQuestion, FaList } from 'react-icons/fa6';
+import { FaBookQuran, FaCircleQuestion, FaList, FaPlantWilt } from 'react-icons/fa6';
 import React from 'react';
 
 const DashboardLayout: React.FC = () => {
@@ -42,8 +44,9 @@ const DashboardLayout: React.FC = () => {
     { to: '/dashboard', label: 'Main Dashboard', icon: <FaBookReader /> },
     { to: '/dashboard/farmers', label: 'Farmers Information', icon: <FaUserFriends /> },
     { to: '/dashboard/groups', label: 'Farmer Groups', icon: <FaUsers /> },
-    { to: '/dashboard/inqueries', label: 'Farmer Inquiries', icon: <FaCircleQuestion /> },
+    { to: '/dashboard/cropdetails', label: 'Crop Details', icon: <FaLeaf/> },
     { to: '/dashboard/updates', label: 'Cultivational Updates', icon: <FaList /> },
+    { to: '/dashboard/inqueries', label: 'Farmer Inquiries', icon: <FaCircleQuestion /> },
     { to: '/dashboard/calendar', label: 'Calendar', icon: <FaCalendarAlt /> },
     { to: '/dashboard/profile', label: 'User Profile', icon: <FaUserCircle /> },
   ];
@@ -55,8 +58,8 @@ const DashboardLayout: React.FC = () => {
         <div className="flex items-center justify-between p-4 border-b border-green-800">
           {isSidebarExpanded && (
             <div className="flex items-center">
-              <img src="/Dearo Agro.png" alt="Logo" className="h-10 mr-2" />
-              <h1 className="text-xl font-bold">Dearo Agro</h1>
+              <img src="/Dearo Agro.png" alt="Logo" className="h-20 mr-2" />
+              <h1 className="text-4xl font-bold text-yellow-300">Dearo Agro</h1>
             </div>
           )}
           <button onClick={toggleSidebar} className="text-white">
@@ -81,13 +84,13 @@ const DashboardLayout: React.FC = () => {
         <div className="p-4 border-t border-green-800 space-y-3">
           <button
             onClick={handleLogout}
-            className="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-md text-sm"
+            className="w-full bg-yellow-400 hover:bg-white text-black font-bold py-2 rounded-md text-sm"
           >
             Logout
           </button>
           <button
             onClick={toggleTheme}
-            className="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded-md flex items-center justify-center space-x-2 text-sm"
+            className="w-full bg-gray-700 hover:bg-gray-600 py-2 rounded-md flex font-bold items-center justify-center space-x-2 text-sm"
           >
             {isDarkMode ? <FaSun /> : <FaMoon />}
             {isSidebarExpanded && <span>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>}
@@ -98,9 +101,8 @@ const DashboardLayout: React.FC = () => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Bar */}
-        <header className="flex justify-between items-center p-4 shadow-md bg-white dark:bg-gray-800 dark:text-white">
-          <div className="text-sm items-end">{formattedDateTime}</div>
-         
+        <header className="flex justify-end items-center p-4 shadow-md bg-white dark:bg-green-900 dark:text-white">
+          <div className="text-sm">{formattedDateTime}</div>
         </header>
 
         {/* Page Content */}

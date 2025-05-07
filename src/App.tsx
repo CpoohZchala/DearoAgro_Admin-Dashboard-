@@ -34,9 +34,9 @@ const App: FC = () => {
           <Route path="farmers" element={<FarmersList />} />
           <Route path="profile" element={<SuperAdminProfile />} />
           <Route path="groups" element={<GroupManagement />} />
-          <Route 
-            path="calendar" 
-            element={<Calendar />} 
+          {/* <Route path="cropdetails" element={<Calendar />} */}
+          <Route path="calendar" element={<Calendar />}
+
           />
           {/* Add other dashboard routes here */}
         </Route>

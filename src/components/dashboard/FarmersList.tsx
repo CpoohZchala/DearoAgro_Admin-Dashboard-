@@ -5,6 +5,7 @@ import { Farmer } from '../../models/Farmer';
 import FarmerForm from './FarmerForm';
 import AssignToGroupModal from './AssignToGroupModal';
 import ConfirmDialog from '../dialogs/ConfirmDialog';
+import ViewDetailsDialog from '../dialogs/ViewDetailsDialog';
 import React from 'react';
 import { FaPlus } from 'react-icons/fa';
 
@@ -20,14 +21,13 @@ const FarmersList = () => {
   const [farmerToDelete, setFarmerToDelete] = useState<string | null>(null);
   const [selectedGroupId, setSelectedGroupId] = useState<{ [key: string]: string }>({});
   const [groups, setGroups] = useState<any[]>([]);
+  const [showDetailsDialog, setShowDetailsDialog] = useState(false);
+  const [selectedFarmerForDetails, setSelectedFarmerForDetails] = useState<Farmer | null>(null);
 
   useEffect(() => {
     const fetchFarmersAndGroups = async () => {
       try {
         const [farmersResponse, groupsResponse] = await Promise.all([getFarmers(), getGroups()]);
-
-        console.log('Raw Farmers Data:', farmersResponse.data); // Debugging log
-        console.log('Groups Response:', groupsResponse); // Debugging log
 
         if (!farmersResponse.success || !groupsResponse.success) {
           throw new Error('Failed to fetch farmers or groups.');
@@ -36,8 +36,6 @@ const FarmersList = () => {
         const groupsMap = new Map(
           groupsResponse.data.map((group: any) => [group._id, group.name])
         );
-
-        console.log('Groups Map:', groupsMap); // Debugging log
 
         farmersResponse.data.forEach((farmer: any) => {
           console.log('Farmer groupId:', farmer.groupId, 'Mapped groupName:', groupsMap.get(farmer.groupId));
@@ -186,6 +184,16 @@ const FarmersList = () => {
     }
   };
 
+  const handleViewDetails = (farmer: Farmer) => {
+    setSelectedFarmerForDetails(farmer);
+    setShowDetailsDialog(true);
+  };
+
+  const closeDetailsDialog = () => {
+    setShowDetailsDialog(false);
+    setSelectedFarmerForDetails(null);
+  };
+
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
@@ -247,7 +255,7 @@ const FarmersList = () => {
                       </button>
                       {renderAssignGroupButton(farmer)}
                       <button
-                        onClick={() => handleFetchFarmerById(farmer._id?.toString() || '')}
+                        onClick={() => handleViewDetails(farmer)}
                         className="text-purple-600 hover:underline block"
                       >
                         View Details
@@ -289,6 +297,13 @@ const FarmersList = () => {
           message="Are you sure you want to delete this farmer?"
           onConfirm={confirmDelete}
           onCancel={cancelDelete}
+        />
+      )}
+
+      {showDetailsDialog && (
+        <ViewDetailsDialog
+          farmer={selectedFarmerForDetails}
+          onClose={closeDetailsDialog}
         />
       )}
     </div>
