@@ -9,6 +9,7 @@ import GroupManagement from './components/dashboard/GroupManagement';
 import Calendar from './components/dashboard/Calendar';
 import { FC } from 'react';
 import React from 'react';
+import CropDetails from './components/dashboard/cropDetails.tsx';
 
 const App: FC = () => {
   const isAuthenticated: boolean = !!localStorage.getItem('token');
@@ -34,11 +35,8 @@ const App: FC = () => {
           <Route path="farmers" element={<FarmersList />} />
           <Route path="profile" element={<SuperAdminProfile />} />
           <Route path="groups" element={<GroupManagement />} />
-          {/* <Route path="cropdetails" element={<Calendar />} */}
-          <Route path="calendar" element={<Calendar />}
-
-          />
-          {/* Add other dashboard routes here */}
+          <Route path="calendar" element={<Calendar />}/>
+          <Route path="cropdetails" element={<CropDetails />} />
         </Route>
 
         <Route 
