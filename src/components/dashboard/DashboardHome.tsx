@@ -6,6 +6,7 @@ import { getGroups } from '../../api/groupApi';
 import { Farmer } from '../../models/Farmer';
 import { Leaf, Users, Calendar } from 'lucide-react';
 import { GrOrderedList } from 'react-icons/gr';
+import { BsQuestion } from 'react-icons/bs';
 
 const DashboardHome: FC = () => {
   const [farmers, setFarmers] = useState<Farmer[]>([]);
@@ -109,7 +110,22 @@ const DashboardHome: FC = () => {
           </div>
           <p className="text-gray-600 mb-4">Can view updated cultivational details</p>
           <Link 
-            to="/dashboard/groups"
+            to="/dashboard/cropdetails"
+            className="text-yellow-400 hover:text-yellow-800 font-medium"
+          >
+            Go to Details →
+          </Link>
+        </div>
+
+        {/* Farmer Inquiries */}
+        <div className="bg-white border border-green-200 p-6 rounded-xl hover:shadow-md transition">
+          <div className="flex items-center gap-3 mb-4">
+            <BsQuestion className="text-green-600" size={28} />
+            <h2 className="text-lg font-bold text-green-800">Farmer Inquiries</h2>
+          </div>
+          <p className="text-gray-600 mb-4">Can view  farmer inquiries</p>
+          <Link 
+            to="/dashboard/cropdetails"
             className="text-yellow-400 hover:text-yellow-800 font-medium"
           >
             Go to Details →

@@ -45,7 +45,6 @@ const DashboardLayout: React.FC = () => {
     { to: '/dashboard/farmers', label: 'Farmers Information', icon: <FaUserFriends /> },
     { to: '/dashboard/groups', label: 'Farmer Groups', icon: <FaUsers /> },
     { to: '/dashboard/cropdetails', label: 'Crop Details', icon: <FaLeaf/> },
-    { to: '/dashboard/updates', label: 'Cultivational Updates', icon: <FaList /> },
     { to: '/dashboard/inqueries', label: 'Farmer Inquiries', icon: <FaCircleQuestion /> },
     { to: '/dashboard/calendar', label: 'Calendar', icon: <FaCalendarAlt /> },
     { to: '/dashboard/profile', label: 'User Profile', icon: <FaUserCircle /> },
