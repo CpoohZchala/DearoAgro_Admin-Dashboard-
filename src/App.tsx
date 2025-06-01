@@ -10,6 +10,7 @@ import Calendar from './components/dashboard/Calendar';
 import { FC } from 'react';
 import React from 'react';
 import CropDetails from './components/dashboard/cropDetails.tsx';
+import FarmerInquirie from './components/dashboard/FarmerInquirie.tsx';
 
 const App: FC = () => {
   const isAuthenticated: boolean = !!localStorage.getItem('token');
@@ -37,6 +38,7 @@ const App: FC = () => {
           <Route path="groups" element={<GroupManagement />} />
           <Route path="calendar" element={<Calendar />}/>
           <Route path="cropdetails" element={<CropDetails />} />
+          <Route path="inqueries" element={<FarmerInquirie/>} />
         </Route>
 
         <Route 
