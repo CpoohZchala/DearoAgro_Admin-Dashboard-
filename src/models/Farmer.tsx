@@ -3,8 +3,10 @@ export interface FarmerProps {
     fullName: string;
     mobileNumber: string;
     groupId?: string;
-    groupName?: string; // Added groupName property
+    groupName?: string; 
     createdAt: string | Date;
+    password?: string; 
+    branchName?: string;
   }
 
   export class Farmer {
@@ -14,24 +16,30 @@ export interface FarmerProps {
     fullName: string;
     mobileNumber: string;
     groupId?: string;
-    groupName?: string; // Added groupName property
+    groupName?: string; 
     createdAt: Date;
+    password?: string;
+    branchName?: string;
 
     constructor({ 
       id, 
       fullName, 
       mobileNumber,  
       groupId, 
-      groupName, // Added groupName to constructor
+      groupName, 
       createdAt, 
-      _id 
+      _id, 
+      password, 
+      branchName
     }: FarmerProps & { _id: string }) {
       this._id = _id;
       this.id = id;
       this.fullName = fullName;
       this.mobileNumber = mobileNumber;
       this.groupId = groupId;
-      this.groupName = groupName; // Initialize groupName
+      this.groupName = groupName; 
       this.createdAt = new Date(createdAt);
+      this.password = password; 
+      this.branchName = branchName; 
     }
   }

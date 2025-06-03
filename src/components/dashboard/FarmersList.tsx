@@ -44,9 +44,10 @@ const FarmersList = () => {
         const farmersWithGroupNames = farmersResponse.data.map((farmer: any) => ({
           ...farmer,
           groupName: groupsMap.get(farmer.groupId) || 'Unassigned',
+          branchName: farmer.branchName || 'Unknown',
         }));
 
-        console.log('Farmers with Group Names:', farmersWithGroupNames); // Debugging log
+        console.log('Farmers with Group Names and Branch Names:', farmersWithGroupNames); // Debugging log
 
         setFarmers(farmersWithGroupNames);
       } catch (err: any) {
@@ -230,6 +231,7 @@ const FarmersList = () => {
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-green-800 uppercase tracking-wider">Name</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-green-800 uppercase tracking-wider">Mobile</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-green-800 uppercase tracking-wider">Branch</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-green-800 uppercase tracking-wider">Group</th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-green-800 uppercase tracking-wider">Actions</th>
                 </tr>
@@ -239,6 +241,7 @@ const FarmersList = () => {
                   <tr key={farmer._id?.toString()}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{farmer.fullName}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{farmer.mobileNumber}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{farmer.branchName}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{typeof farmer.groupName === 'string' ? farmer.groupName : 'Unassigned'}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 space-y-2">
                       <button

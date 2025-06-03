@@ -4,7 +4,9 @@ import {
   FaUserFriends, FaUsers, FaCalendarAlt, FaUserCircle,
   FaSun, FaMoon, FaBars, FaBookReader,
   FaCrop,
-  FaLeaf
+  FaLeaf,
+  FaTeamspeak,
+  FaUser
 } from 'react-icons/fa';
 import { FaBookQuran, FaCircleQuestion, FaList, FaPlantWilt } from 'react-icons/fa6';
 import React from 'react';
@@ -46,6 +48,7 @@ const DashboardLayout: React.FC = () => {
     { to: '/dashboard/groups', label: 'Farmer Groups', icon: <FaUsers /> },
     { to: '/dashboard/cropdetails', label: 'Crop Details', icon: <FaLeaf/> },
     { to: '/dashboard/inqueries', label: 'Farmer Inquiries', icon: <FaCircleQuestion /> },
+    { to: '/dashboard/officers', label: 'Manage Marketing Officers', icon: <FaUser/> },
     { to: '/dashboard/calendar', label: 'Calendar', icon: <FaCalendarAlt /> },
     { to: '/dashboard/profile', label: 'User Profile', icon: <FaUserCircle /> },
   ];

@@ -6,6 +6,7 @@ interface Farmer {
   fullName: string;
   mobileNumber: string;
   groupName?: string;
+  branchName?: string;
 }
 
 interface CropDetail {
@@ -17,6 +18,8 @@ interface CropDetail {
   startDate: string;
   district: string;
   city: string;
+  nic: string;
+  cropYieldSize: number;
 }
 
 interface CropUpdate {
@@ -24,6 +27,14 @@ interface CropUpdate {
   memberId: string;
   addDate: string;
   description: string;
+  fertilizerType?: string;
+  fertilizerAmount?: number;
+  fertilizerUnit?: string;
+  fertilizerDetails?: {
+    fertilizerType?: string;
+    fertilizerAmount?: number;
+    fertilizerUnit?: string;
+  };
 }
 
 interface CropExpense {
@@ -173,6 +184,20 @@ const CropDetails: React.FC = () => {
     return true;
   });
 
+  const updatesWithFertilizerDetails = filteredUpdates.map((update) => {
+    if (update.description === "පොහොර යෙදීම") {
+      return {
+        ...update,
+        fertilizerDetails: {
+          fertilizerType: update.fertilizerType,
+          fertilizerAmount: update.fertilizerAmount,
+          fertilizerUnit: update.fertilizerUnit,
+        },
+      };
+    }
+    return update;
+  });
+
   if (loadingFarmers) {
     return <div className="text-center py-8">Loading farmers...</div>;
   }
@@ -226,6 +251,10 @@ const CropDetails: React.FC = () => {
                 <span className="ml-2">{selectedFarmer.mobileNumber}</span>
               </div>
               <div>
+                <span className="font-medium text-gray-700">Branch:</span>
+                <span className="ml-2">{selectedFarmer.branchName}</span>
+              </div>
+              <div>
                 <span className="font-medium text-gray-700">Group:</span>
                 <span className="ml-2">
                   {selectedFarmer.groupName || "N/A"}
@@ -252,8 +281,11 @@ const CropDetails: React.FC = () => {
                 key={crop._id}
                 className="bg-white rounded-lg shadow-md p-6 border border-gray-200"
               >
-                <h3 className="text-lg font-semibold mb-3">{crop.cropName}</h3>
                 <div className="space-y-2">
+                  <div>
+                    <span className="font-medium text-gray-700">Crop Name:</span>
+                    <span className="ml-2">{crop.cropName}</span>
+                  </div>
                   <div>
                     <span className="font-medium text-gray-700">Category:</span>
                     <span className="ml-2">{crop.cropCategory}</span>
@@ -277,6 +309,14 @@ const CropDetails: React.FC = () => {
                   <div>
                     <span className="font-medium text-gray-700">City:</span>
                     <span className="ml-2">{crop.city}</span>
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-700">NIC:</span>
+                    <span className="ml-2">{crop.nic}</span>
+                  </div>
+                  <div>
+                    <span className="font-medium text-gray-700">Yield Size:</span>
+                    <span className="ml-2">{crop.cropYieldSize}</span>
                   </div>
                 </div>
               </div>
@@ -351,16 +391,24 @@ const CropDetails: React.FC = () => {
                     <th className="px-4 py-2 border-b text-left text-sm font-medium text-gray-700 w-1/4">
                       Added On
                     </th>
+                    
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredUpdates.map((update, index) => (
+                  {updatesWithFertilizerDetails.map((update, index) => (
                     <tr
                       key={update._id}
                       className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}
                     >
                       <td className="px-4 py-2 border-b text-sm text-gray-700 w-3/4">
                         {update.description}
+                        {update.description === "පොහොර යෙදීම" && update.fertilizerDetails && (
+                          <div className="mt-2 text-sm text-gray-500">
+                            <div>Type: {update.fertilizerDetails.fertilizerType}</div>
+                            <div>Amount: {update.fertilizerDetails.fertilizerAmount}</div>
+                            <div>Unit: {update.fertilizerDetails.fertilizerUnit}</div>
+                          </div>
+                        )}
                       </td>
                       <td className="px-4 py-2 border-b text-sm text-gray-500 w-1/4">
                         {new Date(update.addDate).toLocaleDateString()}
@@ -391,41 +439,41 @@ const CropDetails: React.FC = () => {
             Crop Expenses
           </h2>
           <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
-          <div className="overflow-x-auto">
-            <table className="min-w-full bg-white border border-gray-200 rounded-lg">
-              <thead className="bg-green-100">
-                <tr>
-                  <th className="px-4 py-2 border-b text-left text-sm font-medium text-gray-700 w-1/4">
-                    Description
-                  </th>
-                  <th className="px-4 py-2 border-b text-left text-sm font-medium text-gray-700 w-1/4">
-                    Expense
-                  </th>
-                  <th className="px-4 py-2 border-b text-left text-sm font-medium text-gray-700 w-1/4">
-                    Added On
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {cropExpenses.map((expense, index) => (
-                  <tr
-                    key={expense._id}
-                    className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}
-                  >
-                    <td className="px-4 py-2 border-b text-sm text-gray-700 w-1/4">
-                      {expense.description}
-                    </td>
-                    <td className="px-4 py-2 border-b text-sm text-gray-700 w-1/4">
-                      Rs.{expense.expense.toFixed(2)}
-                    </td>
-                    <td className="px-4 py-2 border-b text-sm text-gray-500 w-1/4">
-                      {new Date(expense.addDate).toLocaleDateString()}
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="min-w-full bg-white border border-gray-200 rounded-lg">
+                <thead className="bg-green-100">
+                  <tr>
+                    <th className="px-4 py-2 border-b text-left text-sm font-medium text-gray-700 w-1/4">
+                      Description
+                    </th>
+                    <th className="px-4 py-2 border-b text-left text-sm font-medium text-gray-700 w-1/4">
+                      Expense
+                    </th>
+                    <th className="px-4 py-2 border-b text-left text-sm font-medium text-gray-700 w-1/4">
+                      Added On
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {cropExpenses.map((expense, index) => (
+                    <tr
+                      key={expense._id}
+                      className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}
+                    >
+                      <td className="px-4 py-2 border-b text-sm text-gray-700 w-1/4">
+                        {expense.description}
+                      </td>
+                      <td className="px-4 py-2 border-b text-sm text-gray-700 w-1/4">
+                        Rs.{expense.expense.toFixed(2)}
+                      </td>
+                      <td className="px-4 py-2 border-b text-sm text-gray-500 w-1/4">
+                        {new Date(expense.addDate).toLocaleDateString()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}

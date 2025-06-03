@@ -11,6 +11,7 @@ import { FC } from 'react';
 import React from 'react';
 import CropDetails from './components/dashboard/cropDetails.tsx';
 import FarmerInquirie from './components/dashboard/FarmerInquirie.tsx';
+import MarketingOfficers from './components/dashboard/MarketingOfficers.tsx';
 
 const App: FC = () => {
   const isAuthenticated: boolean = !!localStorage.getItem('token');
@@ -39,6 +40,8 @@ const App: FC = () => {
           <Route path="calendar" element={<Calendar />}/>
           <Route path="cropdetails" element={<CropDetails />} />
           <Route path="inqueries" element={<FarmerInquirie/>} />
+          <Route path="officers" element={<MarketingOfficers/>} />
+         
         </Route>
 
         <Route 
