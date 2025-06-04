@@ -8,7 +8,7 @@ import {
   FaTeamspeak,
   FaUser
 } from 'react-icons/fa';
-import { FaBookQuran, FaCircleQuestion, FaList, FaPlantWilt } from 'react-icons/fa6';
+import { FaBell, FaBookQuran, FaCircleQuestion, FaList, FaPlantWilt } from 'react-icons/fa6';
 import React from 'react';
 
 const DashboardLayout: React.FC = () => {
@@ -49,6 +49,7 @@ const DashboardLayout: React.FC = () => {
     { to: '/dashboard/cropdetails', label: 'Crop Details', icon: <FaLeaf/> },
     { to: '/dashboard/inqueries', label: 'Farmer Inquiries', icon: <FaCircleQuestion /> },
     { to: '/dashboard/officers', label: 'Manage Marketing Officers', icon: <FaUser/> },
+    { to: '/dashboard/products', label: 'Manage Products', icon: <FaBell/> },
     { to: '/dashboard/calendar', label: 'Calendar', icon: <FaCalendarAlt /> },
     { to: '/dashboard/profile', label: 'User Profile', icon: <FaUserCircle /> },
   ];

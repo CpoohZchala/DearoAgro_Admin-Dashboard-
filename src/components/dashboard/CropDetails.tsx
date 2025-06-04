@@ -241,7 +241,7 @@ const CropDetails: React.FC = () => {
             Farmer Information
           </h2>
           <div className="bg-green-100 rounded-lg shadow-md p-6 mb-8 border border-gray-200">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-1">
               <div>
                 <span className="font-medium text-gray-700">Full Name:</span>
                 <span className="ml-2">{selectedFarmer.fullName}</span>
@@ -303,7 +303,27 @@ const CropDetails: React.FC = () => {
                     </span>
                   </div>
                   <div>
-                    <span className="font-medium text-gray-700">District:</span>
+                    <span className="fontconst express = require('express');
+const router = express.Router();
+const productController = require('../controllers/productController');
+
+// Route to fetch all products
+router.get('/', productController.getAllProducts);
+
+// Route to fetch a product by ID
+router.get('/:id', productController.getProductById);
+
+// Route to add a new product
+router.post('/', productController.addProduct);
+
+// Route to update a product by ID
+router.put('/:id', productController.updateProduct);
+
+// Route to delete a product by ID
+router.delete('/:id', productController.deleteProduct);
+
+module.exports = router;
+-medium text-gray-700">District:</span>
                     <span className="ml-2">{crop.district}</span>
                   </div>
                   <div>
@@ -315,8 +335,8 @@ const CropDetails: React.FC = () => {
                     <span className="ml-2">{crop.nic}</span>
                   </div>
                   <div>
-                    <span className="font-medium text-gray-700">Yield Size:</span>
-                    <span className="ml-2">{crop.cropYieldSize}</span>
+                    <span className="font-medium text-gray-700">අක්කර:</span>
+                    <span className="ml-2">අක්කර{crop.cropYieldSize}</span>
                   </div>
                 </div>
               </div>
@@ -405,8 +425,8 @@ const CropDetails: React.FC = () => {
                         {update.description === "පොහොර යෙදීම" && update.fertilizerDetails && (
                           <div className="mt-2 text-sm text-gray-500">
                             <div>Type: {update.fertilizerDetails.fertilizerType}</div>
-                            <div>Amount: {update.fertilizerDetails.fertilizerAmount}</div>
-                            <div>Unit: {update.fertilizerDetails.fertilizerUnit}</div>
+                            <div>Amount: {update.fertilizerDetails?.fertilizerAmount} {update.fertilizerDetails?.fertilizerUnit}</div>
+                            
                           </div>
                         )}
                       </td>
