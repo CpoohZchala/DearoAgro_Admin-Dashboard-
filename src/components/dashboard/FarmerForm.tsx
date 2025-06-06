@@ -1,11 +1,12 @@
-import { useState, ChangeEvent, FormEvent } from "react";
+import { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import { createFarmer, updateFarmer } from "../../api/farmerApi";
 import React from "react";
 import bcrypt from "bcryptjs";
+  import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 interface FarmerFormProps {
   farmer?: {
-    id: string;
+    _id: string;
     fullName: string;
     mobileNumber: string;
   };
@@ -25,17 +26,38 @@ const FarmerForm: React.FC<FarmerFormProps> = ({
   });
   const [error, setError] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // In the handleSubmit function, ensure we're passing the correct ID
+  const validateForm = () => {
+    if (!formData.fullName.trim()) {
+      setError('Full Name is required.');
+      return false;
+    }
+    if (!/^[0-9]{10}$/.test(formData.mobileNumber)) {
+      setError('Mobile Number must be a valid 10-digit number.');
+      return false;
+    }
+    if (!farmer && !formData.password.trim()) {
+      setError('Password is required for new farmers.');
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setError('');
+
+    if (!validateForm()) {
+      return;
+    }
+
     setIsLoading(true);
-    setError("");
 
     try {
       const farmerData = {
@@ -44,10 +66,9 @@ const FarmerForm: React.FC<FarmerFormProps> = ({
       };
 
       let result;
-      if (farmer && farmer.id) {
-        // Explicitly check for farmer.id
-        console.log("Updating farmer with ID:", farmer.id); // Debug log
-        result = await updateFarmer(farmer.id, farmerData);
+      if (farmer && farmer._id) {
+        console.log('Updating farmer with ID:', farmer._id);
+        result = await updateFarmer(farmer._id, farmerData);
       } else {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(formData.password, salt);
@@ -58,16 +79,30 @@ const FarmerForm: React.FC<FarmerFormProps> = ({
       }
 
       if (!result.success) {
-        throw new Error(result.message || "Failed to save farmer");
+        throw new Error(result.message || 'Failed to save farmer');
       }
 
       onSubmit(result.data);
     } catch (err: any) {
-      console.error("Error in handleSubmit:", err); // More detailed error logging
-      setError(err.message || "Failed to save farmer");
+      console.error('Error in handleSubmit:', err);
+      setError(err.message || 'Failed to save farmer');
     } finally {
       setIsLoading(false);
     }
+  };
+
+  useEffect(() => {
+    if (farmer) {
+      setFormData({
+        fullName: farmer.fullName || '',
+        mobileNumber: farmer.mobileNumber || '',
+        password: '',
+      });
+    }
+  }, [farmer]);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -121,22 +156,59 @@ const FarmerForm: React.FC<FarmerFormProps> = ({
           </div>
 
           {!farmer && (
-            <div className="mb-4">
+            <div className="mb-4 relative">
               <label
                 className="block text-gray-700 text-sm font-bold mb-2"
                 htmlFor="password"
               >
                 Password
               </label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                required
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={togglePasswordVisibility}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {farmer && (
+            <div className="mb-4 relative">
+              <label
+                className="block text-gray-700 text-sm font-bold mb-2"
+                htmlFor="password"
+              >
+                Password (Optional)
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                />
+                <button
+                  type="button"
+                  onClick={togglePasswordVisibility}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
+              </div>
             </div>
           )}
 

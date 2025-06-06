@@ -1,4 +1,4 @@
-const BASE_URL = 'http://192.168.8.125:5000/api/farmers';
+const BASE_URL = 'https://dearoagro-backend.onrender.com/api/farmers';
 
 export interface FarmerData {
   fullName: string;
@@ -43,17 +43,23 @@ export const getFarmerById = async (id: string): Promise<ApiResponse> => {
 // Create a new farmer
 export const createFarmer = async (farmerData: FarmerData): Promise<ApiResponse> => {
   try {
+    console.log('Creating farmer with data:', farmerData); // Debug log
+
     const response = await fetch(BASE_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(farmerData),
     });
+
     if (!response.ok) {
-      throw new Error(`Error ${response.status}: ${response.statusText}`);
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || `Error ${response.status}: ${response.statusText}`);
     }
+
     const data = await response.json();
     return { success: true, data };
   } catch (error: any) {
+    console.error('Error in createFarmer:', error); // Log detailed error
     return { success: false, message: error.message };
   }
 };
@@ -86,40 +92,11 @@ export const updateFarmer = async (id: string, farmerData: FarmerData): Promise<
 
 // Delete a farmer by ID
 export const deleteFarmer = async (id: string): Promise<ApiResponse> => {
+  console.log("Deleting farmer with ID:", id); // 🐞 DEBUG LOG
+
   try {
     const response = await fetch(`${BASE_URL}/${id}`, {
       method: 'DELETE',
-    });
-    if (!response.ok) {
-      throw new Error(`Error ${response.status}: ${response.statusText}`);
-    }
-    return { success: true };
-  } catch (error: any) {
-    return { success: false, message: error.message };
-  }
-};
-
-// Get all farmer groups
-export const getFarmerGroups = async (): Promise<ApiResponse> => {
-  try {
-    const response = await fetch(`${BASE_URL}/groups`);
-    if (!response.ok) {
-      throw new Error(`Error ${response.status}: ${response.statusText}`);
-    }
-    const data = await response.json();
-    return { success: true, data };
-  } catch (error: any) {
-    return { success: false, message: error.message };
-  }
-};
-
-// Assign farmer to a group
-export const assignFarmerToGroup = async (farmerId: string, groupId: string): Promise<ApiResponse> => {
-  try {
-    const response = await fetch(`${BASE_URL}/${farmerId}/assign-group`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ groupId }),
     });
     if (!response.ok) {
       throw new Error(`Error ${response.status}: ${response.statusText}`);

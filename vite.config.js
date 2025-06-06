@@ -9,4 +9,12 @@ export default defineConfig({
     tailwindcss(),
     react()
   ],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://dearoagro-backend.onrender.com',
+        changeOrigin: true,
+      },
+    },
+  },
 })

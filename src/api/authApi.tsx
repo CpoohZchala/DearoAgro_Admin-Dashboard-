@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://192.168.8.125:5000/api/auth';
+const API_BASE_URL = 'https://dearoagro-backend.onrender.com/api/auth';
 
 export interface ApiResponse {
   userId: any;
