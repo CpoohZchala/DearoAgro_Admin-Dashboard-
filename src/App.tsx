@@ -9,7 +9,7 @@ import GroupManagement from './components/dashboard/GroupManagement';
 import Calendar from './components/dashboard/Calendar';
 import { FC } from 'react';
 import React from 'react';
-import CropDetails from './components/dashboard/cropDetails.tsx';
+import CropDetails from './components/dashboard/CropDetails.tsx';
 import FarmerInquirie from './components/dashboard/FarmerInquirie.tsx';
 import MarketingOfficers from './components/dashboard/MarketingOfficers.tsx';
 import ProductManagement from './components/dashboard/ProductManagement.tsx';
