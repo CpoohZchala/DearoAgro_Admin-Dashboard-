@@ -23,17 +23,7 @@ const App: FC = () => {
       <Routes>
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
-
-        <Route 
-          path="/dashboard" 
-          element={
-            isAuthenticated && userType === 'Super Admin' ? (
-              <DashboardLayout />
-            ) : (
-              <Navigate to="/signin" replace />
-            )
-          }
-        >
+        <Route path="/dashboard" element={isAuthenticated && userType === 'Super Admin' ? (<DashboardLayout />) : (<Navigate to="/signin" replace />)}>
           <Route index element={<DashboardHome />} />
           <Route path="farmers" element={<FarmersList />} />
           <Route path="profile" element={<SuperAdminProfile />} />
@@ -42,18 +32,10 @@ const App: FC = () => {
           <Route path="cropdetails" element={<CropDetails />} />
           <Route path="inqueries" element={<FarmerInquirie/>} />
           <Route path="officers" element={<MarketingOfficers/>} />
-          <Route path="products" element={<ProductManagement/>} />
-
-          ProductManagement
-         
+          <Route path="products" element={<ProductManagement/>} />         
         </Route>
 
-        <Route 
-          path="*" 
-          element={
-            <Navigate to={isAuthenticated ? "/dashboard" : "/signin"} replace />
-          } 
-        />
+        <Route path="*" element={<Navigate to={isAuthenticated ? "/dashboard" : "/signin"} replace />} />
       </Routes>
     </Router>
   );
