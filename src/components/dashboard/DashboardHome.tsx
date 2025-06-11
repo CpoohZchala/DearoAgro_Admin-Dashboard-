@@ -67,10 +67,7 @@ const DashboardHome: FC = () => {
               <h3 className="text-xl text-gray-900 ">Active Groups</h3>
               <p className="mt-5 text-3xl font-bold text-black">{groups.length}</p>
             </div>
-             <div className="bg-white p-5 rounded-lg shadow-sm text-center border border-yellow-400">
-              <h3 className="text-xl text-gray-900">Total Marketing Officers</h3>
-              <p className="mt-5 text-3xl font-bold text-black">{farmers.length}</p>
-            </div>
+             
           </div>
         )}
       </div>

@@ -11,6 +11,7 @@ export default defineConfig({
       '/api': {
         target: 'https://dearoagro-backend.onrender.com',
         changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
       },
     },
   },
