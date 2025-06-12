@@ -1,4 +1,4 @@
-const BASE_URL = 'https://dearoagro-backend.onrender.com/api/farmers';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export interface FarmerData {
   fullName: string;
@@ -15,7 +15,7 @@ export interface ApiResponse {
 // Fetch all farmers
 export const getFarmers = async (): Promise<ApiResponse> => {
   try {
-    const response = await fetch(BASE_URL);
+    const response = await fetch(`${BASE_URL}/farmers`);
     if (!response.ok) {
       throw new Error(`Error ${response.status}: ${response.statusText}`);
     }
@@ -45,7 +45,7 @@ export const createFarmer = async (farmerData: FarmerData): Promise<ApiResponse>
   try {
     console.log('Creating farmer with data:', farmerData); // Debug log
 
-    const response = await fetch(BASE_URL, {
+    const response = await fetch(`${BASE_URL}/farmers`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(farmerData),
@@ -106,3 +106,7 @@ export const deleteFarmer = async (id: string): Promise<ApiResponse> => {
     return { success: false, message: error.message };
   }
 };
+
+
+
+
