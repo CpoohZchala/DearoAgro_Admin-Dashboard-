@@ -1,6 +1,6 @@
 import React from "react";
 import { DialogContent, } from "@/components/ui/dialog"
-import { FaClock, FaEnvelope, FaMapMarkerAlt, FaPhone } from "react-icons/fa";
+import { FaClock, FaEnvelope, FaMapMarkerAlt, FaPhone, FaFacebookF } from "react-icons/fa";
 
 
 const ContactPop = () => (
@@ -22,12 +22,12 @@ const ContactPop = () => (
 
                 <div className="mt-8 flex space-x-6">
                     <a
-                        href="https://www.facebook.com/dbfinvestmentlimited/"
+                        href="https://www.facebook.com/dearoinvestmentlimited/"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-12 h-12 flex items-center justify-center bg-green-950 rounded-full text-white hover:bg-yellow-500 transition"
                     >
-                        <i className="fab fa-facebook-f text-xl"></i>
+                        <FaFacebookF className="text-xl" />
                     </a>
                     
                 </div>

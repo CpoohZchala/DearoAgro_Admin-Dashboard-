@@ -113,7 +113,7 @@ const Footer = () => {
                   },
                   { 
                     icon: FaEnvelope, 
-                    text: "dbfinvestmentlimited@gmail.com",
+                    text: "info@dearoinvestment.com",
                     color: "text-blue-400"
                   },
                   { 
