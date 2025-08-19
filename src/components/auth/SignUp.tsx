@@ -78,22 +78,22 @@ const SignUp = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50">
-      <div className="flex w-full max-w-4xl bg-white shadow-lg">
-        <div className="w-1/2 p-8 space-y-8">
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
+      <div className="flex flex-col lg:flex-row w-full max-w-4xl bg-white shadow-lg rounded-lg overflow-hidden">
+        <div className="w-full lg:w-1/2 p-4 sm:p-6 lg:p-8 space-y-6 lg:space-y-8">
           <div className="text-center">
-            <h2 className="text-3xl font-extrabold text-gray-900">Super Admin Sign Up</h2>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900">Super Admin Sign Up</h2>
             <p className="mt-2 text-sm text-gray-600">Create a new administration account</p>
           </div>
           {error && (
-            <div className="rounded-md bg-red-50 p-4">
+            <div className="rounded-md bg-red-50 p-3 sm:p-4">
               <p className="text-sm text-red-700">{error}</p>
             </div>
           )}
-          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <form className="mt-6 lg:mt-8 space-y-4 sm:space-y-6" onSubmit={handleSubmit}>
             <div className="space-y-4 rounded-md shadow-sm">
               <div>
-                <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
                   Full Name
                 </label>
                 <input
@@ -101,7 +101,7 @@ const SignUp = () => {
                   name="fullName"
                   type="text"
                   required
-                  className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-green-500 focus:outline-none focus:ring-green-500 sm:text-sm"
+                  className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 sm:py-3 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-green-500 focus:outline-none focus:ring-green-500 text-sm sm:text-base"
                   placeholder="Enter full name"
                   value={formData.fullName}
                   onChange={handleChange}
@@ -109,7 +109,7 @@ const SignUp = () => {
               </div>
               
               <div>
-                <label htmlFor="mobileNumber" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="mobileNumber" className="block text-sm font-medium text-gray-700 mb-1">
                   Mobile Number
                 </label>
                 <input
@@ -117,7 +117,7 @@ const SignUp = () => {
                   name="mobileNumber"
                   type="text"
                   required
-                  className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-green-500 focus:outline-none focus:ring-green-500 sm:text-sm"
+                  className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 sm:py-3 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-green-500 focus:outline-none focus:ring-green-500 text-sm sm:text-base"
                   placeholder="Enter mobile number"
                   value={formData.mobileNumber}
                   onChange={handleChange}
@@ -125,7 +125,7 @@ const SignUp = () => {
               </div>
               
               <div className="relative">
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                   Password
                 </label>
                 <input
@@ -133,22 +133,22 @@ const SignUp = () => {
                   name="password"
                   type={isPasswordVisible ? 'text' : 'password'}
                   required
-                  className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-green-500 focus:outline-none focus:ring-green-500 sm:text-sm pr-12" // Adjusted padding-right for better alignment
+                  className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 sm:py-3 pr-10 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-green-500 focus:outline-none focus:ring-green-500 text-sm sm:text-base"
                   placeholder="Enter password (min 6 characters)"
                   value={formData.password}
                   onChange={handleChange}
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0  right-4 flex items-center text-gray-500"
+                  className="absolute inset-y-0 right-0 top-6 flex items-center pr-3 text-gray-500 hover:text-gray-700"
                   onClick={() => setIsPasswordVisible(!isPasswordVisible)}
                 >
-                  {isPasswordVisible ? <FaEyeSlash /> : <FaEye />}
+                  {isPasswordVisible ? <FaEyeSlash className="h-4 w-4 sm:h-5 sm:w-5" /> : <FaEye className="h-4 w-4 sm:h-5 sm:w-5" />}
                 </button>
               </div>
               
               <div className="relative">
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
                   Confirm Password
                 </label>
                 <input
@@ -156,17 +156,17 @@ const SignUp = () => {
                   name="confirmPassword"
                   type={isConfirmPasswordVisible ? 'text' : 'password'}
                   required
-                  className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-green-500 focus:outline-none focus:ring-green-500 sm:text-sm pr-12" // Adjusted padding-right for better alignment
+                  className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 sm:py-3 pr-10 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-green-500 focus:outline-none focus:ring-green-500 text-sm sm:text-base"
                   placeholder="Confirm password"
                   value={formData.confirmPassword}
                   onChange={handleChange}
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-3 flex items-center text-gray-500" // Ensured alignment with input field
+                  className="absolute inset-y-0 right-0 top-6 flex items-center pr-3 text-gray-500 hover:text-gray-700"
                   onClick={() => setIsConfirmPasswordVisible(!isConfirmPasswordVisible)}
                 >
-                  {isConfirmPasswordVisible ? <FaEyeSlash /> : <FaEye />}
+                  {isConfirmPasswordVisible ? <FaEyeSlash className="h-4 w-4 sm:h-5 sm:w-5" /> : <FaEye className="h-4 w-4 sm:h-5 sm:w-5" />}
                 </button>
               </div>
             </div>
@@ -175,7 +175,7 @@ const SignUp = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className={`group relative flex w-full justify-center rounded-md border border-transparent bg-green-600 py-2 px-4 text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                className={`group relative flex w-full justify-center rounded-md border border-transparent bg-green-600 py-2 sm:py-3 px-4 text-sm sm:text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors duration-200 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 {isLoading ? 'Creating account...' : 'Create Account'}
               </button>
@@ -190,16 +190,20 @@ const SignUp = () => {
             </p>
           </div>
         </div>
-        <div className="w-1/2 flex items-center justify-center bg-black relative">
-          <div className="absolute inset-0 grid grid-cols-4 gap-4 opacity-10">
+        <div className="w-full lg:w-1/2 flex items-center justify-center bg-black relative min-h-64 lg:min-h-0">
+          <div className="absolute inset-0 grid grid-cols-4 gap-2 sm:gap-4 opacity-10 p-4">
             {Array.from({ length: 16 }).map((_, index) => (
               <div key={index} className="bg-white rounded-lg"></div>
             ))}
           </div>
-          <div className="relative text-center text-white">
-            <img src="/Dearo Agro.png" alt="Dearo Agro Logo" className="h-64 mx-auto mb-4" />
-            <p className="text-lg font-semibold">Welcome to Dearo Agro</p>
-            <p className="text-sm">Empowering agriculture with technology</p>
+          <div className="relative text-center text-white p-4 sm:p-6 lg:p-8">
+            <img 
+              src="/Dearo Agro.png" 
+              alt="Dearo Agro Logo" 
+              className="h-32 sm:h-48 lg:h-64 mx-auto mb-4 object-contain" 
+            />
+            <p className="text-base sm:text-lg font-semibold">Welcome to Dearo Agro</p>
+            <p className="text-xs sm:text-sm mt-1">Empowering agriculture with technology</p>
           </div>
         </div>
       </div>
