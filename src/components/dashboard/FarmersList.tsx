@@ -47,7 +47,7 @@ const FarmersList = () => {
           branchName: farmer.branchName || 'Unknown',
         }));
 
-        console.log('Farmers with Group Names and Branch Names:', farmersWithGroupNames); // Debugging log
+        console.log('Farmers with Group Names and Branch Names:', farmersWithGroupNames); 
 
         setFarmers(farmersWithGroupNames);
       } catch (err: any) {

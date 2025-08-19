@@ -1,168 +1,233 @@
 import React, { useState, useEffect } from 'react';
-import { fetchProducts, addProduct, updateProduct, deleteProduct } from '../../api/productApi';
-import { Product } from '../../models/Product';
-import { FaEdit, FaTrashAlt } from 'react-icons/fa';
+import { getHarvestRecords } from '../../api/harvestApi';
+import { fetchCrops } from '@/api/cropApi';
+import { FaSearch, FaSync, FaExclamationTriangle, FaTimes, FaImage } from 'react-icons/fa';
 
-const ProductManagement: React.FC = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [newProduct, setNewProduct] = useState({ name: '', price: 0, image: '', category: '' });
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+interface StockCard {
+  _id: string;
+  cropName: string;
+  currentAmount: number;
+  pricePerKg: number;
+  fullName: string;
+  isProductListed: boolean;
+  totalAmount: number;
+  cropImageUrl?: string;
+}
+
+const StockCardsView: React.FC = () => {
+  const [stockCards, setStockCards] = useState<StockCard[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [error, setError] = useState<string>('');
+  const [cropImages, setCropImages] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    const loadProducts = async () => {
+    const initializeData = async () => {
       try {
-        const fetchedProducts = await fetchProducts();
-        setProducts(fetchedProducts);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-        alert('Failed to load products. Please try again later.');
+        const crops = await fetchCrops();
+        const imagesMap = crops.reduce((acc, crop) => {
+          if (crop.name && crop.imageUrl) acc[crop.name] = crop.imageUrl;
+          return acc;
+        }, {} as Record<string, string>);
+        setCropImages(imagesMap);
+
+        // Fetch stock records after crop images are ready
+        await fetchStockRecords(imagesMap);
+      } catch (err) {
+        console.error('Failed to initialize data:', err);
+        setError('Failed to fetch crops or stock records');
+        setLoading(false);
       }
     };
-    loadProducts();
+
+    initializeData();
   }, []);
 
-  const handleAddProduct = async () => {
+  const fetchStockRecords = async (imagesMap?: Record<string, string>) => {
+    setLoading(true);
+    setError('');
     try {
-      if (newProduct.price <= 0) {
-        alert('Price must be a positive number.');
-        return;
+      const response = await getHarvestRecords();
+      if (response.success) {
+        const data = response.data?.data || response.data || [];
+        if (Array.isArray(data)) {
+          const listedStocks = data
+            .filter(record => record.isProductListed)
+            .map(record => ({
+              _id: record._id,
+              cropName: record.cropName,
+              currentAmount: record.currentAmount || record.totalAmount,
+              pricePerKg: record.pricePerKg,
+              fullName: record.fullName,
+              isProductListed: record.isProductListed || false,
+              totalAmount: record.totalAmount,
+              cropImageUrl: (imagesMap || cropImages)[record.cropName] || '/default-crop.jpg'
+            }));
+          setStockCards(listedStocks);
+        } else {
+          setStockCards([]);
+          setError('Invalid data format received from server');
+        }
+      } else {
+        setError(response.message || 'Failed to fetch stock records');
+        setStockCards([]);
       }
-
-      const addedProduct = await addProduct(newProduct);
-      setProducts([...products, addedProduct]);
-      alert('Product added successfully!');
-    } catch (error) {
-      console.error('Error adding product:', error);
-      alert('Failed to add product. Please try again later.');
+    } catch (err: any) {
+      setError(`Network error: ${err.response?.status || 'Connection failed'} - ${err.message}`);
+      setStockCards([]);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleUpdateProduct = async (id: string, updatedFields: Partial<Product>) => {
-    try {
-      const updatedProduct = await updateProduct(id, updatedFields);
-      setProducts(products.map((product) => (product._id === id ? updatedProduct : product)));
-      alert('Product updated successfully!');
-      setEditingProduct(null); // Reset the editing state to close the form
-    } catch (error) {
-      console.error('Error updating product:', error);
-      alert('Failed to update product. Please try again later.');
-    }
-  };
+  const filteredCards = stockCards.filter(card =>
+    card.cropName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    card.fullName?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  const handleDeleteProduct = async (id: string | undefined) => {
-    if (!id) {
-      console.error('Product ID is undefined. Cannot delete product.');
-      alert('Failed to delete product. Product ID is missing.');
-      return;
-    }
-
-    try {
-      await deleteProduct(id);
-      alert('Product deleted successfully!');
-      const updatedProducts = await fetchProducts();
-      setProducts(updatedProducts);
-    } catch (error: any) {
-      console.error('Error deleting product:', error.message);
-      alert('Failed to delete product. Please try again later.');
-    }
-  };
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-green-500"></div>
+        <p className="ml-4 text-green-600">Loading stock records...</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="p-6 bg-gradient-to-tr from-gray-50 to-gray-100 min-h-screen">
-      <h1 className="text-3xl font-extrabold mb-8 text-center text-gray-800">Product Management</h1>
-
-      {/* Unified Form */}
-      <div className="bg-white p-8 rounded-2xl shadow-lg mb-10 max-w-4xl mx-auto">
-        <h2 className="text-2xl font-bold mb-6 text-gray-700">
-          {editingProduct ? 'Update Product' : 'Add New Product'}
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {['name', 'price', 'image'].map((field) => (
-            <input
-              key={field}
-              type={field === 'price' ? 'number' : 'text'}
-              placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
-              value={(editingProduct ? editingProduct[field as keyof Product] : newProduct[field as keyof Product]) || ''}
-              onChange={(e) => {
-                const value = field === 'price' ? parseFloat(e.target.value) : e.target.value;
-                if (editingProduct) {
-                  setEditingProduct({ ...editingProduct, [field]: value });
-                } else {
-                  setNewProduct({ ...newProduct, [field]: value });
-                }
-              }}
-              className="border border-gray-300 rounded-lg p-4 w-full focus:ring-2 focus:ring-yellow-500"
-            />
-          ))}
-          <select
-            value={editingProduct ? editingProduct.category : newProduct.category}
-            onChange={(e) => {
-              const value = e.target.value;
-              if (editingProduct) {
-                setEditingProduct({ ...editingProduct, category: value });
-              } else {
-                setNewProduct({ ...newProduct, category: value });
-              }
-            }}
-            className="border border-gray-300 rounded-lg p-4 w-full focus:ring-2 focus:ring-yellow-500"
-          >
-            <option value="" disabled>Select Category</option>
-            <option value="Vegetables">Vegetables</option>
-            <option value="Fruits">Fruits</option>
-            <option value="Dairy">Dairy</option>
-            <option value="Grains">Grains</option>
-          </select>
+    <div className="p-6">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-3xl font-bold text-green-800">Listed Products</h1>
+          <p className="text-sm text-gray-500 mt-1">
+            View all currently listed agricultural products
+          </p>
         </div>
-        <div className="flex flex-wrap gap-4 mt-6">
-          <button
-            onClick={editingProduct ? () => handleUpdateProduct(editingProduct._id, editingProduct) : handleAddProduct}
-            className="bg-yellow-300 text-black font-bold py-3 px-6 rounded-lg hover:bg-yellow-400 focus:ring-2 focus:ring-blue-700 transition duration-300"
+        <button
+          onClick={() => fetchStockRecords(cropImages)}
+          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+          disabled={loading}
+        >
+          <FaSync className={loading ? 'animate-spin' : ''} /> Refresh
+        </button>
+      </div>
+
+      {/* Error */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
+          <p>{error}</p>
+          <button 
+            onClick={() => fetchStockRecords(cropImages)}
+            className="text-red-800 underline hover:no-underline mt-1"
           >
-            {editingProduct ? 'Save Changes' : 'Add Product'}
+            Try again
           </button>
-          {editingProduct && (
-            <button
-              onClick={() => setEditingProduct(null)}
-              className="bg-gray-400 text-white py-3 px-6 rounded-lg hover:bg-gray-500 focus:ring-2 focus:ring-gray-700 transition duration-300"
-            >
-              Cancel
-            </button>
-          )}
         </div>
+      )}
+
+      {/* Search */}
+      <div className="mb-6 relative">
+        <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+        <input
+          type="text"
+          placeholder="Search by crop name or farmer name..."
+          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
       </div>
 
-      {/* Product List */}
-      <div className="max-w-6xl mx-auto">
-        <h2 className="text-3xl font-bold mb-6 text-black text-center">Product List</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {products.map((product) => (
-            <div key={product._id} className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition duration-300 p-6">
-              {product.image && (
-                <img src={product.image} alt={product.name} className="h-40 w-full object-cover rounded-lg mb-4" />
-              )}
-              <h3 className="text-2xl font-bold text-gray-800 mb-2">{product.name}</h3>
-              <p className="text-gray-600 mb-1">💰 <strong>Rs.{product.price}</strong></p>
-              <p className="text-gray-600 mb-1">📦 Category: {product.category}</p>
-              <div className="flex justify-between mt-4">
-                <button
-                  onClick={() => setEditingProduct(product)}
-                  className="flex items-center bg-yellow-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg transition duration-300"
-                >
-                  <FaEdit className="mr-2" /> Update
-                </button>
-                <button
-                  onClick={() => handleDeleteProduct(product._id)}
-                  className="flex items-center bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg transition duration-300"
-                >
-                  <FaTrashAlt className="mr-2" /> Delete
-                </button>
-              </div>
-            </div>
-          ))}
+      {/* No results */}
+      {filteredCards.length === 0 ? (
+        <div className="bg-white rounded-lg shadow p-8 text-center">
+          <div className="flex flex-col items-center justify-center">
+            <FaTimes className="text-4xl text-gray-300 mb-4" />
+            <p className="text-lg font-medium text-gray-600">
+              {searchTerm ? 'No listed products match your search.' : 'No products are currently listed.'}
+            </p>
+            {!searchTerm && (
+              <p className="text-sm text-gray-500 mt-2">
+                Products will appear here when they are listed for sale.
+              </p>
+            )}
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {filteredCards.map(card => {
+            const stockPercentage = (card.currentAmount / card.totalAmount) * 100;
+            const isLowStock = stockPercentage < 20 && card.currentAmount > 0;
+            const isOutOfStock = card.currentAmount <= 0;
+
+            return (
+              <div key={card._id} className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow">
+                {/* Image */}
+                <div className="h-48 bg-gray-100 relative overflow-hidden">
+                  {card.cropImageUrl ? (
+                    <img 
+                      src={card.cropImageUrl} 
+                      alt={card.cropName}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {(e.target as HTMLImageElement).src = '/default-crop.jpg';}}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-400">
+                      <FaImage className="text-5xl" />
+                    </div>
+                  )}
+                </div>
+
+                {/* Details */}
+                <div className="p-4">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="text-xl font-bold text-green-800 truncate">{card.cropName}</h3>
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${isOutOfStock ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
+                      {isOutOfStock ? 'Out of Stock' : 'Available'}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-500 mb-4">By: {card.fullName}</p>
+
+                  <div className="space-y-3">
+                    <div>
+                      <p className="text-sm text-gray-500">Available Quantity</p>
+                      <div className="flex items-center">
+                        <p className="text-lg font-semibold">{card.currentAmount} kg</p>
+                        {isLowStock && <FaExclamationTriangle className="ml-2 text-yellow-500" title="Low stock" />}
+                        {isOutOfStock && <FaTimes className="ml-2 text-red-500" title="Out of stock" />}
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
+                        <div 
+                          className={`h-2 rounded-full ${isOutOfStock ? 'bg-red-500' : isLowStock ? 'bg-yellow-500' : 'bg-green-500'}`}
+                          style={{ width: `${isOutOfStock ? 100 : stockPercentage}%` }}
+                        ></div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <p className="text-sm text-gray-500">Price</p>
+                      <p className="text-xl font-bold text-green-600">Rs {card.pricePerKg} /kg</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Footer */}
+                <div className="bg-gray-50 px-4 py-3 flex justify-between items-center">
+                  <span className="text-xs text-gray-500">Stock ID: {card._id.slice(-6).toUpperCase()}</span>
+                  <button 
+                    className="text-sm text-green-600 hover:text-green-800 font-medium"
+                    onClick={() => {/* Add view details or edit functionality */}}
+                  >
+                    View Details
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };
 
-export default ProductManagement;
+export default StockCardsView;

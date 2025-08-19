@@ -8,11 +8,18 @@ import SuperAdminProfile from './components/dashboard/SuperAdminProfile';
 import GroupManagement from './components/dashboard/GroupManagement';
 import Calendar from './components/dashboard/Calendar';
 import { FC } from 'react';
-import React from 'react';
-import CropDetails from './components/dashboard/cropDetails.tsx';
-import FarmerInquirie from './components/dashboard/FarmerInquirie.tsx';
-import MarketingOfficers from './components/dashboard/MarketingOfficers.tsx';
-import ProductManagement from './components/dashboard/ProductManagement.tsx';
+import CropDetails from './components/dashboard/CropDetails';
+import FarmerInquirie from './components/dashboard/FarmerInquirie';
+import MarketingOfficers from './components/dashboard/MarketingOfficers';
+import ProductManagement from './components/dashboard/ProductManagement';
+import HarvestDetails from './components/dashboard/HarvestDetails';
+import Home from './components/home/Home';
+import About from '@/components/pages/About';
+import Contact from './components/pages/Contact';
+import Layout from './components/Layout';
+import Products from './components/pages/products';
+import OrderDetails from './components/dashboard/OrderDetails';
+import ManageCrops from './components/dashboard/ManageCrops';
 
 const App: FC = () => {
   const isAuthenticated: boolean = !!localStorage.getItem('token');
@@ -21,19 +28,18 @@ const App: FC = () => {
   return (
     <Router>
       <Routes>
+        {/* Public routes with Layout */}
+        <Route path="/" element={<Layout><Home /></Layout>} />
+        <Route path="/about" element={<Layout><About /></Layout>} />
+        <Route path="/products" element={<Layout><Products /></Layout>} />
+        <Route path="/contact" element={<Layout><Contact /></Layout>} />
+        
+        {/* Auth routes without Layout */}
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
-
-        <Route 
-          path="/dashboard" 
-          element={
-            isAuthenticated && userType === 'Super Admin' ? (
-              <DashboardLayout />
-            ) : (
-              <Navigate to="/signin" replace />
-            )
-          }
-        >
+        
+        {/* Dashboard routes with their own DashboardLayout */}
+        <Route path="/dashboard" element={isAuthenticated && userType === 'Super Admin' ? (<DashboardLayout />) : (<Navigate to="/signin" replace />)}>
           <Route index element={<DashboardHome />} />
           <Route path="farmers" element={<FarmersList />} />
           <Route path="profile" element={<SuperAdminProfile />} />
@@ -43,17 +49,14 @@ const App: FC = () => {
           <Route path="inqueries" element={<FarmerInquirie/>} />
           <Route path="officers" element={<MarketingOfficers/>} />
           <Route path="products" element={<ProductManagement/>} />
+          <Route path="harvest" element={<HarvestDetails/>} />  
+          {/* <Route path="crop" element={<CropManagement/>} />  */}
+          <Route path="managecrops" element={<ManageCrops/>} />
 
-          ProductManagement
-         
+          <Route path="orders" element={<OrderDetails token={localStorage.getItem('token') || ''}/>} />   
         </Route>
 
-        <Route 
-          path="*" 
-          element={
-            <Navigate to={isAuthenticated ? "/dashboard" : "/signin"} replace />
-          } 
-        />
+        <Route path="*" element={<Navigate to={isAuthenticated ? "/dashboard" : "/signin"} replace />} />
       </Routes>
     </Router>
   );

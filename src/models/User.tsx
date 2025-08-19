@@ -7,6 +7,7 @@ export interface UserProps {
   email?: string;
 }
 
+
 export class User {
   id?: string;
   fullName?: string;
@@ -14,6 +15,7 @@ export class User {
   password: string;
   userType?: string;
   email?: string;
+  
 
   constructor({ id, fullName, mobileNumber, password, userType, email }: UserProps) {
     this.id = id;
