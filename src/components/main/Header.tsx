@@ -86,7 +86,7 @@ export default function Navbar() {
           {[
             { to: "/", label: "Home" },
             { to: "/about", label: "About Us" },
-            { to: "/products", label: "Our Services" },
+            { to: "/products", label: "Our Products" },
             { to: "/contact", label: "Contact" }
           ].map((item, index) => (
             <li 

@@ -15,10 +15,14 @@ const ContactUs = () => (
     </section>
 
     {/* Contact Us Title */}
-    <section className="w-full flex justify-center py-6">
-      <h1 className="font-extrabold text-green-950 text-3xl lg:text-5xl">
-        Contact Us
-      </h1>
+    <section className="w-full py-6 text-center">
+      <div className="flex flex-col items-center">
+        <h1 className="font-extrabold text-green-950 text-3xl lg:text-5xl mb-5">
+          Contact Us
+        </h1>
+        {/* line */}
+        <div className="w-32 h-1 bg-gradient-to-r from-green-800 to-emerald-800 rounded-full mb-10"></div>
+      </div>
     </section>
 
     {/* Contact Form & Office Info Section */}

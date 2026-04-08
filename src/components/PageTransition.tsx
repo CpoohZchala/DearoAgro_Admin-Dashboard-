@@ -23,7 +23,7 @@ const pageVariants = {
 const pageTransition = {
   duration: 0.4,
   ease: 'easeInOut',
-};
+} as const;
 
 const PageTransition = ({ children }: PageTransitionProps) => {
   return (
