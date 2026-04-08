@@ -29,7 +29,8 @@ function Products() {
             </section>
 
             {/* Navigation Tabs */}
-            <div className="w-full">
+            
+             {/* <div className="w-full">
                 <div className="flex justify-center border-b">
                     {["product", "features"].map((tab) => (
                         <button
@@ -44,10 +45,10 @@ function Products() {
                             {tab === "product" ? "About Our App" : "App Features"}
                         </button>
                     ))}
-                </div>
+                </div> */}
 
                 {/* Tab Content */}
-                <section className="w-full max-w-5xl mx-auto grid lg:grid-cols-2 gap-10 px-6 py-10">
+                {/* <section className="w-full max-w-5xl mx-auto grid lg:grid-cols-2 gap-10 px-6 py-10">
                     {activeTab === "product" ? (
                         <>
                             <div className="flex justify-center">
@@ -131,7 +132,8 @@ function Products() {
                         </>
                     )}
                 </section>
-            </div>
+            </div>  */}
+            
         </>
     );
 }
