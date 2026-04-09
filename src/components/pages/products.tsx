@@ -42,7 +42,7 @@ const ProductCard = ({ product }: { product: Product }) => {
         }[theme];
 
         return (
-            <div className={`rounded-[2rem] p-6 lg:p-8 border border-white/50 ${themeColors.bg} backdrop-blur-sm shadow-inner`}>
+            <div className={`rounded-[2rem] p-4 lg:p-8 border border-white/50 ${themeColors.bg} backdrop-blur-sm shadow-inner`}>
                 <div className="space-y-6">
                     {items.map((item, idx) => {
                         const isString = typeof item === 'string';
@@ -57,11 +57,11 @@ const ProductCard = ({ product }: { product: Product }) => {
                                         {title}
                                     </span>
                                     {!isString && (
-                                        <div className={`ml-2 mt-3 space-y-3 border-l-2 ${themeColors.line} pl-6 py-1`}>
+                                        <div className={`ml-1 md:ml-2 mt-3 space-y-3 border-l-2 ${themeColors.line} pl-4 md:pl-6 py-1`}>
                                             {item.subPoints.map((sub, sIdx) => (
-                                                <div key={sIdx} className="flex items-start gap-4 hover:translate-x-1 transition-transform duration-200">
+                                                <div key={sIdx} className="flex items-start gap-2.5 md:gap-4 hover:translate-x-1 transition-transform duration-200">
                                                     <div className={`w-1.5 h-1.5 rounded-full border-2 ${themeColors.dot} mt-1.5 flex-shrink-0 bg-white shadow-sm`} />
-                                                    <span className="text-gray-600 text-sm font-medium leading-relaxed">{sub}</span>
+                                                    <span className="text-gray-600 text-[0.85rem] md:text-sm font-medium leading-relaxed break-words overflow-hidden">{sub}</span>
                                                 </div>
                                             ))}
                                         </div>
@@ -129,7 +129,7 @@ const ProductCard = ({ product }: { product: Product }) => {
             </div>
 
             {/* Content Section - Title, Description saha Tabs meke thiyenne */}
-            <div className="lg:w-3/5 p-8 lg:p-12 relative z-10 flex flex-col">
+            <div className="lg:w-3/5 p-5 lg:p-12 relative z-10 flex flex-col">
                 <div className="mb-6">
                     {/* Category Name */}
                     <div className="inline-block px-4 py-1.5 rounded-full bg-green-100 text-green-800 text-xs font-bold uppercase tracking-widest mb-4">
