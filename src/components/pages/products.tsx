@@ -29,20 +29,20 @@ const ProductCard = ({ product }: { product: Product }) => {
         const themeColors = {
             emerald: {
                 icon: "text-emerald-500",
-                line: "border-emerald-100",
+                line: "border-emerald-100/50",
                 dot: "border-emerald-400",
-                bg: "bg-emerald-50/30"
+                bg: "bg-emerald-50/20"
             },
             green: {
                 icon: "text-green-500",
-                line: "border-green-100",
+                line: "border-green-100/50",
                 dot: "border-green-400",
-                bg: "bg-green-50/30"
+                bg: "bg-green-50/20"
             }
         }[theme];
 
         return (
-            <div className={`rounded-[2rem] p-4 lg:p-8 border border-white/50 ${themeColors.bg} backdrop-blur-sm shadow-inner`}>
+            <div className={`rounded-[2.5rem] p-6 lg:p-10 border border-white/60 ${themeColors.bg} backdrop-blur-md shadow-[inset_0_2px_10px_rgba(255,255,255,0.5)]`}>
                 <div className="space-y-6">
                     {items.map((item, idx) => {
                         const isString = typeof item === 'string';
@@ -82,15 +82,15 @@ const ProductCard = ({ product }: { product: Product }) => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="group relative bg-white/80 backdrop-blur-xl rounded-[2.5rem] shadow-xl shadow-gray-900/5 hover:shadow-2xl hover:shadow-green-900/10 transition-all duration-500 border border-gray-200/50 overflow-hidden flex flex-col lg:flex-row mb-16"
+            className="group relative bg-white/70 backdrop-blur-2xl rounded-[3rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.08)] hover:shadow-[0_40px_80px_-20px_rgba(5,150,105,0.15)] transition-all duration-700 border border-white/80 overflow-hidden flex flex-col lg:flex-row mb-20"
         >
-            {/* Hover Overlay Gradient - Card eka hover karaddi ena podi colour ekak */}
+            {/* Hover Overlay Gradient - when hover Card it will appear */}
             <div className="absolute inset-0 bg-gradient-to-br from-green-400/5 via-transparent to-blue-400/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-            {/* Image Section - Methana thiyenne product images deka udin yatin display krana eka */}
+            {/* Image Section  display product images */}
             <div className="lg:w-2/5 p-8 flex justify-center items-center relative z-10 min-h-[420px] bg-gray-50/30">
                 <div className="relative w-full max-w-[320px] h-[360px] lg:h-[400px]">
-                    {/* Top Image - Udin thiyena image eka */}
+                    {/* Top Image - */}
                     <motion.div
                         initial={{ opacity: 0, y: -40, x: -20, rotate: -3 }}
                         whileInView={{ opacity: 1, y: 0, x: -20, rotate: -3 }}
@@ -107,7 +107,7 @@ const ProductCard = ({ product }: { product: Product }) => {
                         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover/img-top:opacity-100 transition-opacity" />
                     </motion.div>
 
-                    {/* Bottom Image - Yatin thiyena image eka */}
+                    {/* Bottom Image -  */}
                     <motion.div
                         initial={{ opacity: 0, y: 40, x: 20, rotate: 3 }}
                         whileInView={{ opacity: 1, y: 20, x: 20, rotate: 3 }}
@@ -128,15 +128,16 @@ const ProductCard = ({ product }: { product: Product }) => {
                 </div>
             </div>
 
-            {/* Content Section - Title, Description saha Tabs meke thiyenne */}
+            {/* Content Section - Title, Description, Tabs*/}
             <div className="lg:w-3/5 p-5 lg:p-12 relative z-10 flex flex-col">
-                <div className="mb-6">
+                <div className="mb-8">
                     {/* Category Name */}
-                    <div className="inline-block px-4 py-1.5 rounded-full bg-green-100 text-green-800 text-xs font-bold uppercase tracking-widest mb-4">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-emerald-50 text-emerald-700 text-[0.7rem] font-black uppercase tracking-widest mb-6 border border-emerald-100 shadow-sm shadow-emerald-950/5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                         {product.category}
                     </div>
                     {/* Product Title */}
-                    <h3 className="text-3xl lg:text-4xl font-black text-gray-900 mb-4 tracking-tight">
+                    <h3 className="text-3xl lg:text-5xl font-black text-gray-950 mb-6 tracking-tight leading-none">
                         {product.title}
                     </h3>
                     {/* Product Description */}
@@ -151,37 +152,37 @@ const ProductCard = ({ product }: { product: Product }) => {
                         {/* Benefits Button */}
                         <button
                             onClick={() => setActiveTab('benefits')}
-                            className={`flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 rounded-xl font-bold text-xs lg:text-sm transition-all duration-300 flex-shrink-0 ${
+                            className={`flex items-center gap-2 px-6 lg:px-8 py-3 lg:py-4 rounded-2xl font-black text-xs lg:text-sm transition-all duration-500 flex-shrink-0 relative ${
                                 activeTab === 'benefits' 
-                                ? 'bg-white text-green-900 shadow-md ring-1 ring-black/5' 
-                                : 'text-gray-500 hover:text-gray-800'
+                                ? 'bg-white text-emerald-950 shadow-[0_10px_20px_-5px_rgba(0,0,0,0.1)] ring-1 ring-black/5 scale-105 z-10' 
+                                : 'text-gray-400 hover:text-gray-700 hover:bg-white/40'
                             }`}
                         >
-                            <Sparkles className={`w-3.5 h-3.5 lg:w-4 h-4 ${activeTab === 'benefits' ? 'text-emerald-500' : 'text-gray-400'}`} />
+                            <Sparkles className={`w-4 h-4 lg:w-5 h-5 ${activeTab === 'benefits' ? 'text-emerald-500' : 'text-gray-400'}`} />
                             Featured Benefits
                         </button>
                         {/* Best For Whom Button */}
                         <button
                             onClick={() => setActiveTab('forWhom')}
-                            className={`flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 rounded-xl font-bold text-xs lg:text-sm transition-all duration-300 flex-shrink-0 ${
+                            className={`flex items-center gap-2 px-6 lg:px-8 py-3 lg:py-4 rounded-2xl font-black text-xs lg:text-sm transition-all duration-500 flex-shrink-0 relative ${
                                 activeTab === 'forWhom' 
-                                ? 'bg-white text-green-900 shadow-md ring-1 ring-black/5' 
-                                : 'text-gray-500 hover:text-gray-800'
+                                ? 'bg-white text-emerald-950 shadow-[0_10px_20px_-5px_rgba(0,0,0,0.1)] ring-1 ring-black/5 scale-105 z-10' 
+                                : 'text-gray-400 hover:text-gray-700 hover:bg-white/40'
                             }`}
                         >
-                            <Target className={`w-3.5 h-3.5 lg:w-4 h-4 ${activeTab === 'forWhom' ? 'text-green-600' : 'text-gray-400'}`} />
+                            <Target className={`w-4 h-4 lg:w-5 h-5 ${activeTab === 'forWhom' ? 'text-green-600' : 'text-gray-400'}`} />
                             Best For Whom?
                         </button>
                         {/* Why Choose Us Button */}
                         <button
                             onClick={() => setActiveTab('whyChooseUs')}
-                            className={`flex items-center gap-2 px-4 lg:px-6 py-2 lg:py-2.5 rounded-xl font-bold text-xs lg:text-sm transition-all duration-300 flex-shrink-0 ${
+                            className={`flex items-center gap-2 px-6 lg:px-8 py-3 lg:py-4 rounded-2xl font-black text-xs lg:text-sm transition-all duration-500 flex-shrink-0 relative ${
                                 activeTab === 'whyChooseUs' 
-                                ? 'bg-white text-green-900 shadow-md ring-1 ring-black/5' 
-                                : 'text-gray-500 hover:text-gray-800'
+                                ? 'bg-white text-emerald-950 shadow-[0_10px_20px_-5px_rgba(0,0,0,0.1)] ring-1 ring-black/5 scale-105 z-10' 
+                                : 'text-gray-400 hover:text-gray-700 hover:bg-white/40'
                             }`}
                         >
-                            <CheckCircle className={`w-3.5 h-3.5 lg:w-4 h-4 ${activeTab === 'whyChooseUs' ? 'text-blue-600' : 'text-gray-400'}`} />
+                            <CheckCircle className={`w-4 h-4 lg:w-5 h-5 ${activeTab === 'whyChooseUs' ? 'text-blue-600' : 'text-gray-400'}`} />
                             Why Choose Us?
                         </button>
                     </div>
@@ -198,10 +199,13 @@ const ProductCard = ({ product }: { product: Product }) => {
                                     exit={{ opacity: 0, y: -10 }}
                                     transition={{ duration: 0.3 }}
                                 >
-                                    <div className="bg-gradient-to-r from-green-800 to-green-600 text-white px-5 lg:px-6 py-3 rounded-2xl font-black text-sm lg:text-lg mb-6 shadow-lg tracking-tight">
+                                    <div className="bg-gradient-to-r from-green-900 via-emerald-800 to-green-700 text-white px-8 py-5 rounded-[2rem] font-black text-sm lg:text-xl mb-8 shadow-2xl shadow-emerald-900/20 tracking-tight flex items-center gap-4">
+                                        <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center">
+                                            <Sparkles className="w-5 h-5 text-emerald-200" />
+                                        </div>
                                         What are the special benefits?
                                     </div>
-                                    <div className="p-0 lg:p-2">
+                                    <div className="p-0">
                                         {renderModernList(product.benefits, 'emerald')}
                                     </div>
                                 </motion.div>
@@ -214,10 +218,13 @@ const ProductCard = ({ product }: { product: Product }) => {
                                     exit={{ opacity: 0, y: -10 }}
                                     transition={{ duration: 0.3 }}
                                 >
-                                    <div className="bg-gradient-to-r from-green-800 to-green-600 text-white px-5 lg:px-6 py-3 rounded-2xl font-black text-sm lg:text-lg mb-6 shadow-lg tracking-tight">
+                                    <div className="bg-gradient-to-r from-green-900 via-emerald-800 to-green-700 text-white px-8 py-5 rounded-[2rem] font-black text-sm lg:text-xl mb-8 shadow-2xl shadow-emerald-900/20 tracking-tight flex items-center gap-4">
+                                        <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center">
+                                            <Target className="w-5 h-5 text-emerald-200" />
+                                        </div>
                                         For Whom?
                                     </div>
-                                    <div className="p-0 lg:p-2">
+                                    <div className="p-0">
                                         {renderModernList(product.forWhom, 'green')}
                                     </div>
                                 </motion.div>
@@ -230,10 +237,13 @@ const ProductCard = ({ product }: { product: Product }) => {
                                     exit={{ opacity: 0, y: -10 }}
                                     transition={{ duration: 0.3 }}
                                 >
-                                    <div className="bg-gradient-to-r from-green-800 to-green-600 text-white px-5 lg:px-6 py-3 rounded-2xl font-black text-sm lg:text-lg mb-6 shadow-lg tracking-tight">
+                                    <div className="bg-gradient-to-r from-green-900 via-emerald-800 to-green-700 text-white px-8 py-5 rounded-[2rem] font-black text-sm lg:text-xl mb-8 shadow-2xl shadow-emerald-900/20 tracking-tight flex items-center gap-4">
+                                        <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center">
+                                            <CheckCircle className="w-5 h-5 text-emerald-200" />
+                                        </div>
                                         Why you should hunt for Dearo Agro Substrates?
                                     </div>
-                                    <div className="p-0 lg:p-2">
+                                    <div className="p-0">
                                         {renderModernList(product.whyChooseUs, 'emerald')}
                                     </div>
                                 </motion.div>
