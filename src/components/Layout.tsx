@@ -4,6 +4,7 @@ import Footer from "./main/Footer";
 import { useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import PageTransition from "./PageTransition";
+import BackToTop from "./BackToTop";
 
 interface LayoutProps {
   children: ReactNode;
@@ -23,6 +24,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </AnimatePresence>
       </main>
       <Footer />
+      <BackToTop />
     </div>
   );
 };
