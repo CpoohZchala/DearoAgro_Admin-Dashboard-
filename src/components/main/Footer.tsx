@@ -108,12 +108,12 @@ const Footer = () => {
                   },
                   { 
                     icon: FaPhone, 
-                    text: "+94743908274 / +94702896932",
+                    text: "+94743665263",
                     color: "text-green-400"
                   },
                   { 
                     icon: FaEnvelope, 
-                    text: "dbfinvestmentlimited@gmail.com",
+                    text: "agri@dearoinvestment.com",
                     color: "text-blue-400"
                   },
                   { 

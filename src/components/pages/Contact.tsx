@@ -78,15 +78,20 @@ const ContactUs = () => (
         </p>
         <p className="text-gray-700 text-sm mt-2">
           <strong>Tel:</strong>
-          <a href="tel:+94112370990" className="text-green-600 hover:underline">
+          {/* <a href="tel:+94112370990" className="text-green-600 hover:underline">
             {" "}
             (+94) 11 2 370 990
+          </a> */}
+
+           <a href="tel:+94743665263" className="text-green-600 hover:underline">
+            {" "}
+            +(94) 74 3665263
           </a>
           ,
-          <a href="tel:+94114393100" className="text-green-600 hover:underline">
+          {/* <a href="tel:+94114393100" className="text-green-600 hover:underline">
             {" "}
             (+94) 11 4 393 100
-          </a>
+          </a> */}
         </p>
         <p className="text-gray-700 text-sm mt-2">
           <strong>Email:</strong>
@@ -94,7 +99,7 @@ const ContactUs = () => (
             href="mailto:info@dearoagricapitalventure.com"
             className="text-green-600 hover:underline"
           >
-           info@dearoinvestment.com
+           agri@dearoinvestment.com
           </a>
         </p>
         <p className="text-gray-700 text-sm mt-2">
