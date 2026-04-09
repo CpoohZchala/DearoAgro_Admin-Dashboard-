@@ -1,6 +1,8 @@
 import { Card } from "@/components/ui/card";
 import { CalendarCheck, CheckCircle, PiggyBank } from "lucide-react";
 import featuresData from "@/data/features.json";
+import { motion } from "framer-motion";
+
 
 // Define the icon type for better TypeScript support
 type IconType = 'CalendarCheck' | 'PiggyBank' | 'CheckCircle';
@@ -13,13 +15,40 @@ const iconMap: Record<IconType, React.ReactElement> = {
 
 const About = () => (
   <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
-    {/* Header Section with Image */}
-    <section className="mt-15 w-full flex justify-center py-10">
-      <img
+    {/* Header Section */}
+    <section className="mt-15 w-full flex justify-center py-10 overflow-hidden">
+      <motion.img
+        // Page eka load weddi image eka zoom-in wela ena animation eka
+        initial={{ scale: 1.1, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 1.5, ease: "easeOut" }}
         src="/about/about.png"
         alt="About Background"
-        className="w-full h-full object-cover"
+        className="w-full max-h-[300px] sm:max-h-[400px] object-cover shadow-2xl"
       />
+    </section>
+
+    {/* About Our Company Title - Page eke main title eka */}
+    <section className="w-full py-6 text-center relative">
+      <motion.div
+        // Title eka yata idan uda enakota yana animation eka
+        initial={{ opacity: 0, y: -20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="flex flex-col items-center"
+      >
+        <h1 className="font-extrabold text-green-950 text-3xl lg:text-5xl mb-5">
+          About Our Company
+        </h1>
+        {/* Gradient Line - under the title  */}
+        <motion.div
+          initial={{ width: 0 }}
+          whileInView={{ width: 128 }}
+          transition={{ delay: 0.5, duration: 0.8 }}
+          viewport={{ once: true }}
+          className="h-1 bg-gradient-to-r from-green-800 to-emerald-800 rounded-full mb-10"
+        ></motion.div>
+      </motion.div>
     </section>
 
     {/* About Section with Modern Design */}
@@ -29,11 +58,23 @@ const About = () => (
       <div className="absolute bottom-10 right-10 w-40 h-40 bg-gradient-to-br from-blue-400/10 to-cyan-400/10 rounded-full blur-3xl"></div>
       
       <div className="relative max-w-6xl mx-auto text-center">
-        <div className="mb-12">
-          <h2 className="text-4xl lg:text-5xl font-black bg-gradient-to-r from-green-950 via-green-700 to-emerald-600 bg-clip-text text-transparent mb-6">
-            About Our Company
-          </h2>
-          <div className="w-32 h-1 bg-gradient-to-r from-green-500 to-emerald-500 mx-auto rounded-full"></div>
+        <div className="mb-12 text-center">
+          {/* about our company image - Meeka thiyenne content ekata udin */}
+          <div className="relative max-w-4xl mx-auto group perspective-1000 mb-16">
+            <div className="absolute inset-x-0 -bottom-10 h-24 bg-gradient-to-t from-gray-200/50 to-transparent blur-3xl rounded-[100%] opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+            <div className="relative overflow-hidden rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border-4 border-white transform-gpu group-hover:translate-y-[-8px] group-hover:rotate-x-2 transition-all duration-500 ease-out">
+              <img
+                src="/about/about2.webp"
+                alt="About Our Company"
+                className="w-full h-auto object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            </div>
+            
+            {/* Decorative elements */}
+            <div className="absolute -top-4 -right-4 w-12 h-12 bg-yellow-400/20 rounded-full blur-xl animate-pulse"></div>
+            <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-green-400/20 rounded-full blur-xl animate-pulse delay-700"></div>
+          </div>
         </div>
         
         <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl shadow-gray-900/10 p-8 lg:p-12 border border-gray-200/50">
@@ -55,7 +96,7 @@ const About = () => (
           
           {/* Vision Card */}
           <div className="group">
-            <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-3xl p-8 shadow-2xl shadow-green-500/25 hover:shadow-2xl hover:shadow-green-500/40 transition-all duration-500 hover:scale-105 border border-green-400/20">
+            <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-3xl p-8 shadow-2xl shadow-green-500/25 hover:shadow-2xl hover:shadow-green-500/40 transition-all duration-500 hover:scale-105 border border-green-400/20 h-full flex flex-col justify-center">
               <div className="text-center text-white">
                 <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
                   <span className="text-2xl">🌱</span>
