@@ -1,4 +1,3 @@
-import React from "react";
 import { DialogContent, } from "@/components/ui/dialog"
 import { FaClock, FaEnvelope, FaMapMarkerAlt, FaPhone, FaFacebookF } from "react-icons/fa";
 

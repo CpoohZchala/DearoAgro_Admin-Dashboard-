@@ -23,6 +23,7 @@ const FarmersList = () => {
   const [groups, setGroups] = useState<any[]>([]);
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
   const [selectedFarmerForDetails, setSelectedFarmerForDetails] = useState<Farmer | null>(null);
+  const [searchText, setSearchText] = useState('');
 
   useEffect(() => {
     const fetchFarmersAndGroups = async () => {
@@ -47,7 +48,7 @@ const FarmersList = () => {
           branchName: farmer.branchName || 'Unknown',
         }));
 
-        console.log('Farmers with Group Names and Branch Names:', farmersWithGroupNames); 
+        console.log('Farmers with Group Names and Branch Names:', farmersWithGroupNames);
 
         setFarmers(farmersWithGroupNames);
       } catch (err: any) {
@@ -73,6 +74,15 @@ const FarmersList = () => {
 
     fetchGroups();
   }, []);
+
+  const filteredFarmers = farmers.filter((farmer) => {
+    const farmerName = farmer.fullName || '';
+    return farmerName.toLowerCase().includes(searchText.toLowerCase().trim());
+  });
+
+  const handleClearSearch = () => {
+    setSearchText('');
+  };
 
   const handleDeleteClick = (id: string) => {
     setFarmerToDelete(id);
@@ -128,7 +138,7 @@ const FarmersList = () => {
         alert('Farmer assigned to group successfully!');
         setFarmers(prevFarmers => prevFarmers.map(farmer =>
           farmer._id === farmerId ? { ...farmer, groupId, groupName: groups.find(group => group._id === groupId)?.name || 'Unassigned' } : farmer
-         ));
+        ));
         // Clear the selected group for the farmer after assignment
         setSelectedGroupId(prev => ({ ...prev, [farmerId]: '' }));
       } else {
@@ -198,16 +208,54 @@ const FarmersList = () => {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-extrabold text-black  px-4 py-2 ">📂Farmers Management</h2>
+        <h2 className="text-3xl font-extrabold text-black px-4 py-2">
+          📂Farmers Management
+        </h2>
         <button
           onClick={() => { setShowForm(true); setEditingFarmer(null); }}
           className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md"
         >
-           <FaPlus />
+          <FaPlus />
         </button>
       </div>
 
       <div className="bg-white rounded-lg shadow-md p-6">
+        {/* Farmer Search Top Bar */}
+        <div className="sticky top-0 z-20 mb-6 bg-white/95 backdrop-blur-sm py-4 border-b border-gray-200">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div>
+              <h3 className="text-xl font-bold text-gray-900">
+                Farmer List
+              </h3>
+              <p className="text-sm text-gray-500">
+                Showing {filteredFarmers.length} of {farmers.length} farmers
+              </p>
+            </div>
+
+            <div className="w-full lg:w-96">
+              <div className="relative">
+                <input
+                  type="text"
+                  value={searchText}
+                  onChange={(e) => setSearchText(e.target.value)}
+                  placeholder="Search farmer by name..."
+                  className="w-full bg-white border border-gray-200 rounded-full py-3 pl-5 pr-12 text-sm text-gray-700 placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                />
+
+                {searchText && (
+                  <button
+                    type="button"
+                    onClick={handleClearSearch}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-700 text-sm flex items-center justify-center"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="mb-6 p-4 bg-green-50 rounded-lg">
           <h3 className="text-lg font-semibold text-green-800">
             Total Farmers: <span className="text-2xl">{farmers.length}</span>
@@ -224,6 +272,15 @@ const FarmersList = () => {
           <div className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div>
           </div>
+        ) : filteredFarmers.length === 0 ? (
+          <div className="text-center py-16 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              No farmers found
+            </h3>
+            <p className="text-gray-500">
+              Try another farmer name
+            </p>
+          </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
@@ -237,7 +294,7 @@ const FarmersList = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {farmers.map((farmer) => (
+                {filteredFarmers.map((farmer) => (
                   <tr key={farmer._id?.toString()}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{farmer.fullName}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{farmer.mobileNumber}</td>
@@ -282,7 +339,7 @@ const FarmersList = () => {
 
       {showAssignModal && selectedFarmer && (
         <AssignToGroupModal
-          groupId={selectedFarmer.groupId || ''} // Pass an empty string if groupId is missing
+          groupId={selectedFarmer.groupId || ''}
           farmer={selectedFarmer}
           onClose={() => setShowAssignModal(false)}
           onAssign={(groupId: string) => {

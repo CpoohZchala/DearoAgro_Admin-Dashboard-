@@ -64,7 +64,7 @@ const DashboardLayout: React.FC = () => {
           {isSidebarExpanded && (
             <div className="flex items-center gap-2">
               <img src="/Dearo Agro.png" alt="Logo" className="h-12 w-12 rounded-full" />
-              <h1 className="text-xl font-bold text-yellow-300">Dearo Agro</h1>
+              <h1 className="text-xl font-bold text-yellow-300">HelaAgro</h1>
             </div>
           )}
           <button onClick={toggleSidebar} className="text-white text-lg hover:text-yellow-400">
