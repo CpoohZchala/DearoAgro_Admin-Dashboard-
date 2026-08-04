@@ -2,23 +2,37 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
+import { motion } from "framer-motion";
 
 const ContactUs = () => (
   <>
     {/* Header Section with Image */}
-    <section className="mt-15 w-full flex justify-center bg-white py-10">
-      <img
+    <section className="mt-15 w-full flex justify-center py-10 overflow-hidden">
+      <motion.img
+        initial={{ scale: 1.1, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 1.5, ease: "easeOut" }}
         src="https://www.eecojiyo.com/wp-content/uploads/2024/07/contact122.jpg"
         alt="Contact Us Banner"
-        className="w-full max-h-[300px] object-cover"
+        className="w-full max-h-[300px] sm:max-h-[400px] object-cover shadow-2xl"
       />
     </section>
 
     {/* Contact Us Title */}
-    <section className="w-full flex justify-center py-6">
-      <h1 className="font-extrabold text-green-950 text-3xl lg:text-5xl">
-        Contact Us
-      </h1>
+    <section className="w-full py-6 text-center">
+      <div className="flex flex-col items-center">
+        <h1 className="font-extrabold text-green-950 text-3xl lg:text-5xl mb-5">
+          Contact Us
+        </h1>
+         {/* Gradient Line */}
+        <motion.div
+            initial={{ width: 0 }}
+            whileInView={{ width: 128 }}
+            transition={{ delay: 0.5, duration: 0.8 }}
+            viewport={{ once: true }}
+            className="h-1 bg-gradient-to-r from-green-800 to-emerald-800 rounded-full mb-10"
+        ></motion.div>
+      </div>
     </section>
 
     {/* Contact Form & Office Info Section */}
@@ -64,15 +78,20 @@ const ContactUs = () => (
         </p>
         <p className="text-gray-700 text-sm mt-2">
           <strong>Tel:</strong>
-          <a href="tel:+94112370990" className="text-green-600 hover:underline">
+          {/* <a href="tel:+94112370990" className="text-green-600 hover:underline">
             {" "}
             (+94) 11 2 370 990
+          </a> */}
+
+           <a href="tel:+94743665263" className="text-green-600 hover:underline">
+            {" "}
+            +(94) 74 3665263
           </a>
           ,
-          <a href="tel:+94114393100" className="text-green-600 hover:underline">
+          {/* <a href="tel:+94114393100" className="text-green-600 hover:underline">
             {" "}
             (+94) 11 4 393 100
-          </a>
+          </a> */}
         </p>
         <p className="text-gray-700 text-sm mt-2">
           <strong>Email:</strong>
@@ -80,7 +99,7 @@ const ContactUs = () => (
             href="mailto:info@dearoagricapitalventure.com"
             className="text-green-600 hover:underline"
           >
-           info@dearoinvestment.com
+           agri@dearoinvestment.com
           </a>
         </p>
         <p className="text-gray-700 text-sm mt-2">

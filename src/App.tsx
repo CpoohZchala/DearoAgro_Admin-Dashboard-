@@ -20,6 +20,7 @@ import Layout from './components/Layout';
 import Products from './components/pages/products';
 import OrderDetails from './components/dashboard/OrderDetails';
 import ManageCrops from './components/dashboard/ManageCrops';
+import ScrollToTop from './components/ScrollToTop';
 
 const App: FC = () => {
   const isAuthenticated: boolean = !!localStorage.getItem('token');
@@ -27,6 +28,7 @@ const App: FC = () => {
 
   return (
     <Router>
+      <ScrollToTop />
       <Routes>
         {/* Public routes with Layout */}
         <Route path="/" element={<Layout><Home /></Layout>} />
