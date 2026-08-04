@@ -59,6 +59,9 @@ const CropDetails: React.FC = () => {
   const [filterDate, setFilterDate] = useState<string>("");
   const [filterOption, setFilterOption] = useState<string>("currentMonth");
 
+  const [farmerSearchText, setFarmerSearchText] = useState<string>("");
+  const [showFarmerDropdown, setShowFarmerDropdown] = useState<boolean>(false);
+
   // Fetch all farmers on component mount
   useEffect(() => {
     const fetchFarmers = async () => {
@@ -95,7 +98,7 @@ const CropDetails: React.FC = () => {
         console.log("Fetching crop details from:", url);
         const response = await axios.get<CropDetail[]>(url);
         setCropDetails(response.data);
-      } catch (err) {
+      } catch (err: any) {
         if (err.response?.status === 404) {
           setError("No crop details found for this farmer");
         } else {
@@ -114,7 +117,7 @@ const CropDetails: React.FC = () => {
         console.log("Fetching crop updates from:", url);
         const response = await axios.get<CropUpdate[]>(url);
         setCropUpdates(response.data);
-      } catch (err) {
+      } catch (err: any) {
         if (err.response?.status === 404) {
           setError("No crop updates found for this farmer");
         } else {
@@ -133,7 +136,7 @@ const CropDetails: React.FC = () => {
         console.log("Fetching crop expenses from:", url);
         const response = await axios.get<CropExpense[]>(url);
         setCropExpenses(response.data);
-      } catch (err) {
+      } catch (err: any) {
         if (err.response?.status === 404) {
           setError("No crop expenses found for this farmer");
         } else {
@@ -150,10 +153,33 @@ const CropDetails: React.FC = () => {
     fetchCropExpenses();
   }, [selectedFarmer]);
 
-  const handleFarmerChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const farmerId = e.target.value;
-    const farmer = farmers.find((f) => f._id === farmerId) || null;
+  const filteredFarmers = farmers.filter((farmer) => {
+    const search = farmerSearchText.toLowerCase().trim();
+    const name = farmer.fullName?.toLowerCase() || "";
+    const number = farmer.mobileNumber?.toLowerCase() || "";
+
+    return name.includes(search) || number.includes(search);
+  });
+
+  const handleSelectFarmer = (farmer: Farmer) => {
     setSelectedFarmer(farmer);
+    setFarmerSearchText(`${farmer.fullName} (${farmer.mobileNumber})`);
+    setShowFarmerDropdown(false);
+    setError(null);
+
+    setCropDetails([]);
+    setCropUpdates([]);
+    setCropExpenses([]);
+  };
+
+  const handleClearFarmerSearch = () => {
+    setSelectedFarmer(null);
+    setFarmerSearchText("");
+    setShowFarmerDropdown(false);
+    setCropDetails([]);
+    setCropUpdates([]);
+    setCropExpenses([]);
+    setError(null);
   };
 
   const handleDateFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -202,37 +228,92 @@ const CropDetails: React.FC = () => {
     return <div className="text-center py-8">Loading farmers...</div>;
   }
 
-  if (error) {
-    return <div className="text-center py-8 text-red-500">{error}</div>;
-  }
-
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-6">Farmer Crop Details</h1>
 
-      {/* Farmer Selection Dropdown */}
-      <div className="mb-8">
-        <label
-          htmlFor="farmer-select"
-          className="block text-sm font-medium text-gray-700 mb-2"
-        >
-          Select Farmer
-        </label>
-        <select
-          id="farmer-select"
-          onChange={handleFarmerChange}
-          className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-          value={selectedFarmer?._id || ""}
-        >
-          <option value="">-- Select a farmer --</option>
-          {Array.isArray(farmers) &&
-            farmers.map((farmer) => (
-              <option key={farmer._id} value={farmer._id}>
-                {farmer.fullName} ({farmer.mobileNumber})
-              </option>
-            ))}
-        </select>
+      {/* Farmer Search Dropdown */}
+      <div className="mb-8 bg-white rounded-lg shadow-md p-6 border border-gray-200">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
+          <div>
+            <h2 className="text-xl font-bold text-gray-900">
+              Select Farmer
+            </h2>
+            <p className="text-sm text-gray-500">
+              Search farmer by name or mobile number
+            </p>
+          </div>
+
+          {selectedFarmer && (
+            <button
+              type="button"
+              onClick={handleClearFarmerSearch}
+              className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-full text-sm font-medium"
+            >
+              Clear Selection
+            </button>
+          )}
+        </div>
+
+        <div className="relative">
+          <input
+            type="text"
+            value={farmerSearchText}
+            onChange={(e) => {
+              setFarmerSearchText(e.target.value);
+              setShowFarmerDropdown(true);
+              setSelectedFarmer(null);
+            }}
+            onFocus={() => setShowFarmerDropdown(true)}
+            placeholder="Search farmer name or mobile number..."
+            className="w-full bg-white border border-gray-200 rounded-full py-3 pl-5 pr-12 text-sm text-gray-700 placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+          />
+
+          {farmerSearchText && (
+            <button
+              type="button"
+              onClick={handleClearFarmerSearch}
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-700 text-sm flex items-center justify-center"
+            >
+              ✕
+            </button>
+          )}
+
+          {showFarmerDropdown && (
+            <div className="absolute z-30 mt-2 w-full bg-white border border-gray-200 rounded-xl shadow-lg max-h-72 overflow-y-auto">
+              {filteredFarmers.length > 0 ? (
+                filteredFarmers.map((farmer) => (
+                  <button
+                    key={farmer._id}
+                    type="button"
+                    onClick={() => handleSelectFarmer(farmer)}
+                    className="w-full text-left px-5 py-3 hover:bg-green-50 border-b border-gray-100 last:border-b-0 transition"
+                  >
+                    <div className="font-semibold text-gray-900">
+                      {farmer.fullName}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {farmer.mobileNumber}
+                      {farmer.branchName ? ` • ${farmer.branchName}` : ""}
+                      {farmer.groupName ? ` • ${farmer.groupName}` : ""}
+                    </div>
+                  </button>
+                ))
+              ) : (
+                <div className="px-5 py-4 text-sm text-gray-500">
+                  No farmer found
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
+
+      {error && (
+        <div className="text-center py-4 mb-6 text-red-500 bg-red-50 rounded-lg">
+          {error}
+        </div>
+      )}
 
       {/* Farmer Information */}
       {selectedFarmer && (
@@ -391,7 +472,6 @@ const CropDetails: React.FC = () => {
                     <th className="px-4 py-2 border-b text-left text-sm font-medium text-gray-700 w-1/4">
                       Added On
                     </th>
-                    
                   </tr>
                 </thead>
                 <tbody>
@@ -402,13 +482,19 @@ const CropDetails: React.FC = () => {
                     >
                       <td className="px-4 py-2 border-b text-sm text-gray-700 w-3/4">
                         {update.description}
-                        {update.description === "පොහොර යෙදීම" && update.fertilizerDetails && (
-                          <div className="mt-2 text-sm text-gray-500">
-                            <div>Type: {update.fertilizerDetails.fertilizerType}</div>
-                            <div>Amount: {update.fertilizerDetails?.fertilizerAmount} {update.fertilizerDetails?.fertilizerUnit}</div>
-                            
-                          </div>
-                        )}
+                        {update.description === "පොහොර යෙදීම" &&
+                          update.fertilizerDetails && (
+                            <div className="mt-2 text-sm text-gray-500">
+                              <div>
+                                Type: {update.fertilizerDetails.fertilizerType}
+                              </div>
+                              <div>
+                                Amount:{" "}
+                                {update.fertilizerDetails?.fertilizerAmount}{" "}
+                                {update.fertilizerDetails?.fertilizerUnit}
+                              </div>
+                            </div>
+                          )}
                       </td>
                       <td className="px-4 py-2 border-b text-sm text-gray-500 w-1/4">
                         {new Date(update.addDate).toLocaleDateString()}

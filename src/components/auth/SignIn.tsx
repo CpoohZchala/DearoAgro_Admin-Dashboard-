@@ -154,7 +154,7 @@ const SignIn = () => {
               alt="Dearo Agro Logo" 
               className="h-32 sm:h-48 lg:h-64 mx-auto mb-4 object-contain" 
             />
-            <p className="text-base sm:text-lg font-semibold">Welcome to Dearo Agro</p>
+            <p className="text-base sm:text-lg font-semibold">Welcome to HelaAgro</p>
             <p className="text-xs sm:text-sm mt-1">Empowering agriculture with technology</p>
           </div>
         </div>

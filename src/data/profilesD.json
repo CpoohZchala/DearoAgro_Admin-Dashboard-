@@ -1,0 +1,43 @@
+[
+    {
+        "id":1,
+        "image":"/team/p.png",
+        "name":"Mr. Prasanna Ranasinghe",
+        "possition":"Director / Chief Executive  Officer - BBA.MBA  University of Peradeniya",
+        "more":"Mr.Prasanna Ranasinghe is adept with proven expertise in the banking and finance industry for over 15 years. He holds a Master of Business Administration from the University of Peradeniya. Before obtaining Mr. Ranasinghe completed an BBA- Marketing from University of Peradeniya. Mr.Prasanna is a Credit Management and Banking and Finance Diploma from IBSL Sri Lanka and Corporate Finance Institute. Mr.Prasanna is a passionate leader with over 15 years of experience in the fields of Credit Management, Recovery, Marketing, Corporate Planning, Branding, Digital and Sales Strategy."
+    },
+    {
+        "id":2,
+        "image":"/team/t.png",
+        "name":"Mr. Tharindu Dhananjaya",
+        "possition":"Group Executive Director / CIO - Masters in Entrepreneurship USJP - BSc. IT SLIIT",
+        "more":"Tharindu Dhananjaya Director Of Amethyst Institute Holds A Master’s Degree In Entrepreneurship From The University Of Sri Jayawardhenepura And Has Bsc IT Degree From Sri Lanka Institute Of Information Technology. Apart from These He Runs Software Development Company Called “Apply Bright Solutions”.He Has Over 7 Years Extensive Industrial Software Engineering ICT Experiences. Apart from That He Does Business Development Consultation and Mentoring. He is Director /Chief Executive Officer at Dearo IT Solution pvt ltd."
+    },
+   
+    
+    {
+        "id":3,
+        "image":"/team/u.png",
+        "name":"Mr. Upul Edirisooriy",
+        "possition":"Group Director (Independent executive director)",
+        "more":"He is a Business Professional Business Man and Director of Rural cooperative Bank Bataatha Ranna.he have more than 30 years experience contraction, Sea foods business& Agriculture Plantation."
+    },
+    
+    
+    {
+        "id":4,
+        "image":"/team/neranjan.png",
+        "name":"Mr. Niranjan Warnasooriya",
+        "possition":"Director / Chief Operation Officer",
+        "more":""
+    },
+    
+    {
+        "id":5,
+        "image":"/team/pb.png",
+        "name":"Mr. Prabash Gunarathne",
+        "possition":"Director / Operation - Dip.CM/MF.IBSL",
+        "more":"Mr. Gunarathne counts 17 years of experience in Marketing Recoveries. Having started his career at Saylan Bank PLC as a Marketing Officer, he has held key positions at Ceylinco Leasing Ltd and HNB Finance PLC during his career. He describes himself as a calm and analytical person. He combines legal expertise with an artistic streak, having won several awards for his creativity."
+    }
+    
+]

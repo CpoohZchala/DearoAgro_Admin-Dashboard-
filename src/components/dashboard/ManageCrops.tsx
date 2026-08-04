@@ -55,17 +55,28 @@ const AddCropForm: React.FC<AddCropFormProps> = ({ crops, setCrops }) => {
       ) : (
         <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-lg mt-4">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-semibold text-gray-800">Add New Crop</h3>
-            <button onClick={handleCancel} className="text-gray-400 hover:text-gray-600">✕</button>
+            <h3 className="text-xl font-semibold text-gray-800">
+              Add New Crop
+            </h3>
+            <button
+              onClick={handleCancel}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              ✕
+            </button>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Crop Name *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Crop Name *
+              </label>
               <input
                 type="text"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter crop name"
                 required
@@ -73,26 +84,36 @@ const AddCropForm: React.FC<AddCropFormProps> = ({ crops, setCrops }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Category *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Category *
+              </label>
               <select
                 value={formData.category}
-                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, category: e.target.value })
+                }
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                 required
               >
                 <option value="">Select a category</option>
                 {CROP_CATEGORIES.map((category) => (
-                  <option key={category} value={category}>{category}</option>
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
                 ))}
               </select>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Image URL *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Image URL *
+              </label>
               <input
                 type="url"
                 value={formData.imageUrl}
-                onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, imageUrl: e.target.value })
+                }
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                 placeholder="Enter image URL"
                 required
@@ -107,6 +128,7 @@ const AddCropForm: React.FC<AddCropFormProps> = ({ crops, setCrops }) => {
               >
                 {loading ? "Adding..." : "Add Crop"}
               </button>
+
               <button
                 type="button"
                 onClick={handleCancel}
@@ -140,13 +162,22 @@ const CATEGORY_FILTERS = [
 
 const CropList: React.FC<CropListProps> = ({ crops, setCrops }) => {
   const [editingCrop, setEditingCrop] = useState<Crop | null>(null);
-  const [editFormData, setEditFormData] = useState({ name: "", category: "", imageUrl: "" });
+  const [editFormData, setEditFormData] = useState({
+    name: "",
+    category: "",
+    imageUrl: "",
+  });
   const [loading, setLoading] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState("All");
+  const [searchText, setSearchText] = useState("");
 
   const handleEdit = (crop: Crop) => {
     setEditingCrop(crop);
-    setEditFormData({ name: crop.name, category: crop.category, imageUrl: crop.imageUrl });
+    setEditFormData({
+      name: crop.name,
+      category: crop.category,
+      imageUrl: crop.imageUrl,
+    });
   };
 
   const handleUpdate = async (e: React.FormEvent) => {
@@ -156,7 +187,11 @@ const CropList: React.FC<CropListProps> = ({ crops, setCrops }) => {
     setLoading(editingCrop._id);
     try {
       const updatedCrop = await updateCrop(editingCrop._id, editFormData);
-      setCrops((prev) => prev.map((crop) => (crop._id === editingCrop._id ? updatedCrop : crop)));
+      setCrops((prev) =>
+        prev.map((crop) =>
+          crop._id === editingCrop._id ? updatedCrop : crop
+        )
+      );
       setEditingCrop(null);
     } catch (err) {
       alert("Failed to update crop");
@@ -168,6 +203,7 @@ const CropList: React.FC<CropListProps> = ({ crops, setCrops }) => {
 
   const handleDelete = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this crop?")) return;
+
     setLoading(id);
     try {
       await deleteCrop(id);
@@ -185,66 +221,155 @@ const CropList: React.FC<CropListProps> = ({ crops, setCrops }) => {
     setEditFormData({ name: "", category: "", imageUrl: "" });
   };
 
-  const filteredCrops =
-    activeFilter === "All" ? crops : crops.filter((crop) => crop.category === activeFilter);
+  const filteredCrops = crops.filter((crop) => {
+    const matchesCategory =
+      activeFilter === "All" || crop.category === activeFilter;
+
+    const matchesSearch = crop.name
+      .toLowerCase()
+      .includes(searchText.toLowerCase().trim());
+
+    return matchesCategory && matchesSearch;
+  });
+
+  const handleClearSearch = () => {
+    setSearchText("");
+  };
 
   return (
     <div>
-      {/* Filter Buttons */}
-      <div className="flex flex-wrap gap-3 mb-6">
-        {CATEGORY_FILTERS.map((cat) => (
-          <button
-            key={cat}
-            onClick={() => setActiveFilter(cat)}
-            className={`px-4 py-2 rounded-full font-medium transition duration-200 ${
-              activeFilter === cat ? "bg-green-600 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-            }`}
-          >
-            {cat}
-          </button>
-        ))}
+      {/* Filter Top Bar */}
+      <div className="sticky top-0 z-20 mb-8 bg-gray-50/95 backdrop-blur-sm py-4 border-b border-gray-200">
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div>
+              <h2 className="text-xl font-bold text-gray-900">
+                Crop Categories
+              </h2>
+              <p className="text-sm text-gray-500">
+                Showing {filteredCrops.length} of {crops.length} crops
+              </p>
+            </div>
+
+            {/* Search Box */}
+            <div className="w-full lg:w-96">
+              <div className="relative">
+                <input
+                  type="text"
+                  value={searchText}
+                  onChange={(e) => setSearchText(e.target.value)}
+                  placeholder="Search crop by name..."
+                  className="w-full bg-white border border-gray-200 rounded-full py-3 pl-5 pr-12 text-sm text-gray-700 placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                />
+
+                {searchText && (
+                  <button
+                    type="button"
+                    onClick={handleClearSearch}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 hover:text-gray-700 text-sm flex items-center justify-center"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Category Buttons */}
+          <div className="flex gap-3 overflow-x-auto pb-2 lg:pb-0">
+            {CATEGORY_FILTERS.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveFilter(cat)}
+                className={`whitespace-nowrap px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 border ${
+                  activeFilter === cat
+                    ? "bg-green-600 text-white border-green-600 shadow-md scale-105"
+                    : "bg-white text-gray-700 border-gray-200 hover:bg-green-50 hover:text-green-700 hover:border-green-300"
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       {filteredCrops.length === 0 ? (
         <div className="text-center py-16 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No crops found</h3>
-          <p className="text-gray-500">Add some crops to get started</p>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            No crops found
+          </h3>
+          <p className="text-gray-500">
+            Try another crop name or category
+          </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredCrops.map((crop) => (
-            <div key={crop._id} className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
+            <div
+              key={crop._id}
+              className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden"
+            >
               {editingCrop?._id === crop._id ? (
                 <form onSubmit={handleUpdate} className="p-4 space-y-4">
                   <input
                     type="text"
                     value={editFormData.name}
-                    onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        name: e.target.value,
+                      })
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md"
                     required
                   />
+
                   <select
                     value={editFormData.category}
-                    onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        category: e.target.value,
+                      })
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md"
                     required
                   >
                     {CROP_CATEGORIES.map((cat) => (
-                      <option key={cat} value={cat}>{cat}</option>
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
                     ))}
                   </select>
+
                   <input
                     type="url"
                     value={editFormData.imageUrl}
-                    onChange={(e) => setEditFormData({ ...editFormData, imageUrl: e.target.value })}
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        imageUrl: e.target.value,
+                      })
+                    }
                     className="w-full px-3 py-2 border border-gray-300 rounded-md"
                     required
                   />
+
                   <div className="flex space-x-2">
-                    <button type="submit" disabled={loading === crop._id} className="flex-1 bg-green-600 text-white py-2 rounded-md">
+                    <button
+                      type="submit"
+                      disabled={loading === crop._id}
+                      className="flex-1 bg-green-600 text-white py-2 rounded-md"
+                    >
                       {loading === crop._id ? "Saving..." : "Save"}
                     </button>
-                    <button type="button" onClick={handleCancelEdit} className="flex-1 bg-gray-500 text-white py-2 rounded-md">
+
+                    <button
+                      type="button"
+                      onClick={handleCancelEdit}
+                      className="flex-1 bg-gray-500 text-white py-2 rounded-md"
+                    >
                       Cancel
                     </button>
                   </div>
@@ -255,15 +380,26 @@ const CropList: React.FC<CropListProps> = ({ crops, setCrops }) => {
                     src={crop.imageUrl}
                     alt={crop.name}
                     className="w-full h-48 object-cover"
-                    onError={(e) => ((e.target as HTMLImageElement).src = "https://via.placeholder.com/300x200?text=No+Image")}
+                    onError={(e) =>
+                      ((e.target as HTMLImageElement).src =
+                        "https://via.placeholder.com/300x200?text=No+Image")
+                    }
                   />
+
                   <div className="p-4">
                     <h4 className="text-lg font-semibold">{crop.name}</h4>
-                    <p className="text-sm text-gray-600 mb-4">{crop.category}</p>
+                    <p className="text-sm text-gray-600 mb-4">
+                      {crop.category}
+                    </p>
+
                     <div className="flex space-x-2">
-                      <button onClick={() => handleEdit(crop)} className="flex-1 bg-yellow-500 text-white py-2 rounded-md">
+                      <button
+                        onClick={() => handleEdit(crop)}
+                        className="flex-1 bg-yellow-500 text-white py-2 rounded-md"
+                      >
                         Edit
                       </button>
+
                       <button
                         onClick={() => crop._id && handleDelete(crop._id)}
                         disabled={loading === crop._id}
@@ -297,14 +433,19 @@ const ManageCrops: React.FC = () => {
         alert("Failed to load crops");
       }
     };
+
     loadCrops();
   }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold text-gray-900 mb-6">Manage Crops</h1>
+        <h1 className="text-4xl font-bold text-gray-900 mb-6">
+          Manage Crops
+        </h1>
+
         <AddCropForm crops={crops} setCrops={setCrops} />
+
         <CropList crops={crops} setCrops={setCrops} />
       </div>
     </div>
