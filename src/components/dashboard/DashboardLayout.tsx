@@ -1,16 +1,18 @@
-import { Outlet, Link, useNavigate } from 'react-router-dom';
+import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import {
   FaUserFriends, FaUsers, FaCalendarAlt, FaUserCircle,
   FaSun, FaMoon, FaBars, FaBookReader,
-  FaLeaf, FaQuestionCircle, FaUser, FaCarrot, FaCartPlus, FaBell,
-  FaApple,
+  FaLeaf, FaUser, FaCarrot, FaCartPlus, FaBell,
   FaCrop
 } from 'react-icons/fa';
 import React from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import PageTransition from '../PageTransition';
 
 const DashboardLayout: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -75,15 +77,21 @@ const DashboardLayout: React.FC = () => {
         {/* Nav Links */}
         <nav className="flex-1 overflow-y-auto px-2 py-4 space-y-2">
           {navItems.map((item) => (
-            <Link
+            <motion.div
               key={item.to}
-              to={item.to}
-              className="flex items-center gap-3 hover:bg-green-800 px-4 py-2 rounded-lg transition-colors duration-200"
-              title={!isSidebarExpanded ? item.label : undefined}
+              whileHover={{ scale: 1.02, x: 5 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 10 }}
             >
-              <span className="text-xl">{item.icon}</span>
-              {isSidebarExpanded && <span className="text-sm">{item.label}</span>}
-            </Link>
+              <Link
+                to={item.to}
+                className="flex items-center gap-3 hover:bg-green-800 px-4 py-2 rounded-lg transition-colors duration-200"
+                title={!isSidebarExpanded ? item.label : undefined}
+              >
+                <span className="text-xl">{item.icon}</span>
+                {isSidebarExpanded && <span className="text-sm">{item.label}</span>}
+              </Link>
+            </motion.div>
           ))}
         </nav>
 
@@ -114,7 +122,11 @@ const DashboardLayout: React.FC = () => {
 
         {/* Main Outlet */}
         <main className="flex-1 overflow-y-auto p-6 bg-gradient-to-br from-white via-green-50 to-green-100 dark:from-green-950 dark:via-green-900 dark:to-green-800 transition-all duration-300">
-          <Outlet />
+          <AnimatePresence mode="wait">
+            <PageTransition key={location.pathname}>
+              <Outlet />
+            </PageTransition>
+          </AnimatePresence>
         </main>
       </div>
     </div>
